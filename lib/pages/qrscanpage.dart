@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fyp_mobileapp/pages/dashboard.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScan extends StatefulWidget {
@@ -31,6 +32,17 @@ class _QRScanState extends State<QRScan> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Dashboard(),
+                ));
+          },
+        ),
+        automaticallyImplyLeading: false,
         title: const Text("Scan QRCODE",
             style: TextStyle(
               color: Colors.black,

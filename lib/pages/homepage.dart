@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,8 +10,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Home Page'),
+      ),
+      body: const Column(
         children: [
           Card(
             child: ListTile(
@@ -27,7 +29,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 children: [
                   Column(
-                    children: const [
+                    children: [
                       Text('Home Page 1'),
                       Text('Home Page 2'),
                     ],

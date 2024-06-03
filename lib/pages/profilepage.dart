@@ -13,6 +13,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Profile Page'),
+      ),
       body: Center(
         child: Column(
           children: [

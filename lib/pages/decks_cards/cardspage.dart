@@ -5,17 +5,20 @@ import '../../models/deck.dart';
 
 class CardPage extends StatefulWidget {
   final DeckModel deck;
-  CardPage({required Key key, required this.deck});
+  CardPage({
+    required Key key,
+    required this.deck,
+    required List<CardModel> cards,
+  });
 
   @override
   State<CardPage> createState() => _CardPageState();
 }
-
-List<CardModel> cards = List<CardModel>.generate(
-  25,
-  (index) =>
-      CardModel(title: 'Item $index', content: 'Content for card $index'),
-);
+// List<CardModel> cards = List<CardModel>.generate(
+//   25,
+//   (index) =>
+//       CardModel(title: 'Item $index', content: 'Content for card $index'),
+// );
 
 class _CardPageState extends State<CardPage> {
   @override
@@ -38,7 +41,7 @@ class _CardPageState extends State<CardPage> {
                   color: Colors.blue,
                   child: GridView.count(
                     crossAxisCount: 3,
-                    children: cards.map((individualcard) {
+                    children: widget.deck.cards.map((individualcard) {
                       return InkWell(
                         onTap: () {
                           Navigator.push(

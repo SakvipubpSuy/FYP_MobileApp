@@ -10,8 +10,12 @@ class TradePage extends StatefulWidget {
 class _TradePageState extends State<TradePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Trade Page'),
+      ),
+      body: const Center(
         child: Column(
           children: [
             Text('Trade Page 1'),

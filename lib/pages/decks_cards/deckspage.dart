@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/pages/decks_cards/cardspage.dart';
+import '../../models/card.dart';
 import '../../models/deck.dart';
+import '../../utils/route.dart';
 
 class DeckPage extends StatefulWidget {
   const DeckPage({super.key});
@@ -12,13 +14,24 @@ class DeckPage extends StatefulWidget {
 List<DeckModel> decks = List<DeckModel>.generate(
   21,
   (index) => DeckModel(
-      title: 'Item $index', content: 'Content for card $index', cards: []),
+    title: 'Deck $index',
+    content: 'Content for card $index',
+    cards: List<CardModel>.generate(
+        5,
+        (cardIndex) => CardModel(
+            title: 'Card $cardIndex of Deck $index',
+            content: 'Content for Card $cardIndex of Deck $index')),
+  ),
 );
 
 class _DeckPageState extends State<DeckPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Deck Page'),
+      ),
       body: Center(
         child: Column(
           children: [
@@ -36,13 +49,17 @@ class _DeckPageState extends State<DeckPage> {
                     children: decks.map((deck) {
                       return InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CardPage(
-                                  deck: deck, key: ValueKey(deck.title)),
-                            ),
-                          );
+                          Navigator.of(context).push(createRoute(CardPage(
+                              deck: deck,
+                              key: ValueKey(deck.title),
+                              cards: deck.cards)));
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => CardPage(
+                          //         deck: deck, key: ValueKey(deck.title)),
+                          //   ),
+                          // );
                         },
                         child: Card(
                           child: ListTile(

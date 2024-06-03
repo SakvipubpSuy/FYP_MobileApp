@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../models/card.dart';
 
@@ -13,6 +14,25 @@ class IndividualCardPage extends StatefulWidget {
 class _IndividualCardPageState extends State<IndividualCardPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Individual Card Page'),
+      ),
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Text(
+              widget.individualcard.content,
+              style: const TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
