@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../api/auth_service.dart';
 import '../../widgets/field_component.dart';
 import '../../widgets/login_register_component.dart';
 import '../dashboard.dart';
@@ -12,6 +12,37 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _register() {
+    AuthService.register(
+      _usernameController.text,
+      _emailController.text,
+      _passwordController.text,
+    ).then((response) {
+      if (response['status'] == 'success') {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return Dashboard();
+        }));
+      } else {
+        final snackBar = SnackBar(
+          content: Text(response['message']),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,34 +66,33 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
             const SizedBox(height: 100),
-            const Center(
+            Center(
               child: CustomField(
+                controller: _usernameController,
                 hintText: "Username",
               ),
             ),
-            const Center(
+            Center(
               child: CustomField(
+                controller: _emailController,
                 hintText: "Email",
               ),
             ),
-            const Center(
+            Center(
               child: CustomField(
+                controller: _passwordController,
                 hintText: "Password",
               ),
             ),
-            const Center(
-              child: CustomField(
-                hintText: "Confirm Password",
-              ),
-            ),
+            // const Center(
+            //   child: CustomField(
+            //     hintText: "Confirm Password",
+            //   ),
+            // ),
             const SizedBox(height: 20),
             CustomCard(
               buttonText: "Register",
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const Dashboard();
-                }));
-              },
+              onTap: _register,
               color: Colors.blue,
             ),
           ],

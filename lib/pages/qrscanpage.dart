@@ -38,7 +38,7 @@ class _QRScanState extends State<QRScan> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const Dashboard(),
+                  builder: (context) => Dashboard(),
                 ));
           },
         ),

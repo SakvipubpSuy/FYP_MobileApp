@@ -6,7 +6,7 @@ import 'package:fyp_mobileapp/pages/qrscanpage.dart';
 import 'package:fyp_mobileapp/pages/tradepage.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  Dashboard({super.key});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -20,7 +20,7 @@ class _DashboardState extends State<Dashboard> {
     const DeckPage(),
     const QRScan(),
     const TradePage(),
-    const ProfilePage(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

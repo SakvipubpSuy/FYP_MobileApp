@@ -4,12 +4,14 @@ class CustomField extends StatelessWidget {
   final Color? color;
   final String hintText;
   final double height;
+  final TextEditingController? controller;
 
   const CustomField({
     super.key,
     required this.hintText,
     this.height = 40,
     this.color = Colors.grey,
+    this.controller,
   });
 
   @override
@@ -20,7 +22,8 @@ class CustomField extends StatelessWidget {
         child: Center(
           child: SizedBox(
             height: height,
-            child: TextFormField(
+            child: TextField(
+              controller: controller,
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(color: color),

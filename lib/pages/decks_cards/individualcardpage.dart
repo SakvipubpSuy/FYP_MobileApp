@@ -5,7 +5,7 @@ import '../../models/card.dart';
 
 class IndividualCardPage extends StatefulWidget {
   final CardModel individualcard;
-  IndividualCardPage({required Key key, required this.individualcard});
+  const IndividualCardPage({super.key, required this.individualcard});
 
   @override
   State<IndividualCardPage> createState() => _IndividualCardPageState();
@@ -27,7 +27,7 @@ class _IndividualCardPageState extends State<IndividualCardPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Text(
-              widget.individualcard.content,
+              widget.individualcard.cardName,
               style: const TextStyle(fontSize: 20),
             ),
           ),
