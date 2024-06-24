@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/models/card.dart';
 import 'package:fyp_mobileapp/pages/decks_cards/individualcardpage.dart';
 import '../../api/card_service.dart';
-import '../../models/deck.dart';
 import '../../utils/route.dart';
 
 class CardPage extends StatefulWidget {
