@@ -35,7 +35,15 @@ class _DeckPageState extends State<DeckPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Deck Page'),
+        centerTitle: true,
+        title: Text(
+          'Deck Page',
+          style: TextStyle(
+            color: Colors.grey[800]!,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: FutureBuilder<List<DeckModel>>(
         future: futureDecks,
@@ -62,6 +70,10 @@ class _DeckPageState extends State<DeckPage> {
               itemBuilder: (context, index) {
                 DeckModel deck = decks[index];
                 return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 5,
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(createRoute(CardPage(
@@ -69,29 +81,52 @@ class _DeckPageState extends State<DeckPage> {
                         deckName: deck.deckName,
                       )));
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            deck.deckName,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.0),
+                        gradient: LinearGradient(
+                          colors: [Colors.blueAccent, Colors.cyan[800]!],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              deck.deckName,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            deck.deckDescription,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
+                            SizedBox(height: 10),
+                            Text(
+                              deck.deckDescription,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
                             ),
-                          ),
-                        ],
+                            Text(
+                              'You have collected ${deck.scannedCardCount} / ${deck.totalCardCount}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

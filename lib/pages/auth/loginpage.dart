@@ -4,6 +4,7 @@ import 'package:fyp_mobileapp/widgets/field_component.dart';
 import '../../api/auth_service.dart';
 
 import '../../widgets/login_register_component.dart';
+import 'registerpage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -80,49 +81,146 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void _navigateToRegisterPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RegisterPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.keyboard_arrow_left_outlined,
+            size: 30,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(
-                "Welcome to Login Page",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Text(
+                  "Here to Get Welcomed !",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            const SizedBox(height: 100),
-            Center(
-              child: CustomField(
+              const SizedBox(height: 80),
+              const Text(
+                "Sign In",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
                 controller: _emailController,
-                hintText: "Email",
+                decoration: const InputDecoration(
+                  hintText: "Email",
+                ),
               ),
-            ),
-            Center(
-              child: CustomField(
+              const SizedBox(height: 40),
+              TextFormField(
                 controller: _passwordController,
-                hintText: "Password",
+                decoration: const InputDecoration(
+                  hintText: "Password",
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            CustomCard(
-              buttonText: "Login",
-              onTap: _login,
-              color: Colors.blue,
-            ),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Spacer(),
+                  InkWell(
+                    onTap: _login,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      height: 65,
+                      width: 65,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF2F2F85),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    Column(
+                      children: [
+                        GestureDetector(
+                          onTap: _navigateToRegisterPage,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.blue,
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Sign Up",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.blue,
+                                width: 2.0,
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            "Forgot Password",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

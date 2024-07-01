@@ -24,23 +24,40 @@ class CardPage extends StatefulWidget {
 
 class _CardPageState extends State<CardPage> {
   late Future<List<CardModel>> futureCards;
+  bool _loadingComplete = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     futureCards = CardService().getCardsByDeck(widget.deckId);
+    _simulateLoadingDelay();
+  }
+
+  void _simulateLoadingDelay() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() {
+      _loadingComplete = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: const Icon(Icons.keyboard_arrow_left),
+        ),
         title: Text(widget.deckName),
       ),
       body: FutureBuilder<List<CardModel>>(
         future: futureCards,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!_loadingComplete) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -59,44 +76,75 @@ class _CardPageState extends State<CardPage> {
               padding: const EdgeInsets.all(10.0),
               itemBuilder: (context, index) {
                 CardModel card = cards[index];
-                return Card(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(createRoute(IndividualCardPage(
-                        individualcard: card,
-                      )));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            card.cardName,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            card.cardDescription,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                return CardWidget(card: card);
               },
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class CardWidget extends StatelessWidget {
+  final CardModel card;
+
+  const CardWidget({super.key, required this.card});
+
+  Color getCardColor(String tierName) {
+    switch (tierName.toLowerCase()) {
+      case 'legend card':
+        return Colors.orangeAccent; // Color for Legend tier
+      case 'epic card':
+        return Colors.purpleAccent[700]!; // Color for Epic tier
+      default:
+        return Colors.blueAccent; // Default color
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(createRoute(IndividualCardPage(
+            individualcard: card,
+          )));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            color: getCardColor(card.cardTier.cardTierName),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                card.cardName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                card.cardDescription,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

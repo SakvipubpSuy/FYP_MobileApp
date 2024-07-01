@@ -30,7 +30,7 @@ class CardService {
     );
 
     if (response.statusCode == 200) {
-      List jsonResponse = jsonDecode(response.body);
+      final List jsonResponse = jsonDecode(response.body);
       return jsonResponse.map((card) => CardModel.fromJson(card)).toList();
     } else {
       throw Exception('Failed to fetch cards');
@@ -50,23 +50,34 @@ class CardService {
       body: jsonEncode({'card_id': int.parse(cardId)}),
     );
 
-    // Debug: Print the response status and body
-
+    var responseMessage = jsonDecode(response.body);
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Card scanned successfully')),
+        SnackBar(content: Text(responseMessage['message'])),
       );
     } else {
-      print('Error: ${response.body}');
-      if (response.statusCode == 401) {
-        // If unauthorized, navigate to login page
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to scan card: ${response.reasonPhrase}')),
-        );
-      }
+      String errorMessage = responseMessage['message'] ?? 'Failed to scan card';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to scan card: $errorMessage')),
+      );
+    }
+  }
+
+  Future<int> countUserTotalCards() async {
+    String? token = await _storage.read(key: 'auth_token');
+    final response = await http.get(
+      Uri.parse('$baseUrl/user/total-cards'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['total_cards'];
+    } else {
+      throw Exception('Failed to load scanned cards count');
     }
   }
 }

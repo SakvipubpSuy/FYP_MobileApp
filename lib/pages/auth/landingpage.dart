@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/pages/auth/registerpage.dart';
 
+import '../../utils/route.dart';
 import '../../widgets/login_register_component.dart';
 import 'loginpage.dart';
 
@@ -16,33 +17,79 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Logo And Name Here"),
-              SizedBox(height: 200),
-              CustomCard(
-                buttonText: "Login",
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const LoginPage();
-                  }));
-                },
-                color: Colors.blue,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "Welcome to the GAME APP",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              CustomCard(
-                buttonText: "Register",
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const RegisterPage();
-                  }));
-                },
-                color: Colors.blue,
+            ),
+            Image.network(
+              "https://img.freepik.com/free-vector/player-characters-online-game-concept_23-2148541601.jpg",
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Card(
+                color: Colors.blue[700],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      createRoute(const LoginPage()),
+                    );
+                  },
+                  child: const SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Center(
+                        child: Text(
+                          "Login",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Card(
+                color: Colors.blue[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      createRoute(const RegisterPage()),
+                    );
+                  },
+                  child: const SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      child: Center(
+                        child: Text(
+                          "Register",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );

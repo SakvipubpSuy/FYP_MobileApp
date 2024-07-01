@@ -58,12 +58,12 @@ class _DashboardState extends State<Dashboard> {
             const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(0xFF2F2F85),
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.card_travel),
               label: 'Deck',
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.blueAccent,
             ),
             BottomNavigationBarItem(
               icon: GestureDetector(
@@ -88,7 +88,7 @@ class _DashboardState extends State<Dashboard> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
+          selectedItemColor: Colors.yellow[700],
           onTap: _onItemTapped,
         ));
   }
