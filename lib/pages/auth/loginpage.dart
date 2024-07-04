@@ -21,8 +21,8 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _emailController.text = 'eidousermobile4@gmail.com';
-    _passwordController.text = 'eidousermobile4@gmail.com';
+    _emailController.text = 'usereido@gmail.com';
+    _passwordController.text = 'usereido';
   }
 
   @override
