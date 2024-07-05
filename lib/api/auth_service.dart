@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
   static const String baseUrl =
-      "http://10.0.2.2:8000/api"; // Replace with your API URL
+      "https://monkfish-app-pozus.ondigitalocean.app/api"; // Replace with your API URL
   static final FlutterSecureStorage _storage = FlutterSecureStorage();
 
 //REGISTER

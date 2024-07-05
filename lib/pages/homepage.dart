@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../api/card_service.dart';
 import '../utils/route.dart';
 import 'qrscanpage.dart';
 
@@ -11,7 +12,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final CardService _cardService = CardService();
+  int? _totalCards;
+
   @override
+  void initState() {
+    super.initState();
+    _fetchTotalCards();
+  }
+
+  void _fetchTotalCards() async {
+    try {
+      final totalCards = await _cardService.countUserTotalCards();
+      setState(() {
+        _totalCards = totalCards;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch total cards: $e')),
+      );
+    }
+  }
+
   Widget build(BuildContext context) {
     const textStyle20 = TextStyle(
       color: Colors.white,
@@ -59,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   const SizedBox(height: 40),
-                  const Flex(
+                  Flex(
                     direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -74,12 +96,12 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Your Card',
+                                  '.',
                                   style: textStyle20,
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  'Cards: 29',
+                                  '.',
                                   style: textStyle16,
                                 ),
                               ],
@@ -104,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  'Cards: 29',
+                                  _totalCards?.toString() ?? '0',
                                   style: textStyle16,
                                 ),
                               ],
@@ -130,12 +152,12 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Your Card',
+                                  '.',
                                   style: textStyle20,
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  'Cards: 29',
+                                  '',
                                   style: textStyle16,
                                 ),
                               ],
@@ -155,12 +177,12 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Your Card',
+                                  '.',
                                   style: textStyle20,
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  'Cards: 29',
+                                  '.',
                                   style: textStyle16,
                                 ),
                               ],
@@ -180,12 +202,12 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Your Card',
+                                  '.',
                                   style: textStyle20,
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  'Cards: 29',
+                                  '.',
                                   style: textStyle16,
                                 ),
                               ],

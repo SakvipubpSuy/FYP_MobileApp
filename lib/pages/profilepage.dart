@@ -122,18 +122,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  Column(
-                    children: [
-                      CircleBoxScreen(
-                        child: Icon(Icons.tv),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Humidity',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                  // Column(
+                  //   children: [
+                  //     CircleBoxScreen(
+                  //       child: Icon(Icons.tv),
+                  //     ),
+                  //     SizedBox(height: 10),
+                  //     Text(
+                  //       'Humidity',
+                  //       style: TextStyle(fontSize: 16),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               const SizedBox(height: 20),
