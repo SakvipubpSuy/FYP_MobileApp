@@ -21,7 +21,7 @@ class _LandingPageState extends State<LandingPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Welcome to the GAME APP",
+              "Welcome to UniSaga",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

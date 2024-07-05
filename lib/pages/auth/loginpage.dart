@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 child: Text(
-                  "Here to Get Welcomed !",
+                  "Sign in and start your saga today!",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),

@@ -16,17 +16,19 @@ import 'package:fyp_mobileapp/models/card_tier.dart';
 
 class CardModel {
   final int cardId;
+  final int? parentCardId;
   final int deckId;
   final int cardTierId;
   final String cardName;
   final String cardDescription;
-  final String cardVersion;
+  final int cardVersion;
   final String createdAt;
   final String updatedAt;
   final CardTierModel cardTier;
 
   CardModel({
     required this.cardId,
+    this.parentCardId,
     required this.deckId,
     required this.cardTierId,
     required this.cardName,
@@ -40,6 +42,7 @@ class CardModel {
   factory CardModel.fromJson(Map<String, dynamic> json) {
     return CardModel(
       cardId: json['card_id'],
+      parentCardId: json['parent_card_id'],
       deckId: json['deck_id'],
       cardTierId: json['card_tier_id'],
       cardName: json['card_name'],
@@ -54,6 +57,7 @@ class CardModel {
   Map<String, dynamic> toJson() {
     return {
       'card_id': cardId,
+      'parent_card_id': parentCardId,
       'deck_id': deckId,
       'card_tier_id': cardTierId,
       'card_name': cardName,
