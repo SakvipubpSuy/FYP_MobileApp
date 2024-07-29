@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/pages/auth/loginpage.dart';
 import '../../api/auth_service.dart';
-import '../../widgets/field_component.dart';
-import '../../widgets/login_register_component.dart';
+// import '../../widgets/field_component.dart';
+// import '../../widgets/login_register_component.dart';
 import '../dashboard.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -26,11 +26,14 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _register() {
-    AuthService.register(
+    AuthService authService = AuthService();
+    authService
+        .register(
       _usernameController.text,
       _emailController.text,
       _passwordController.text,
-    ).then((response) {
+    )
+        .then((response) {
       if (response['status'] == 'success') {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return Dashboard();
@@ -41,6 +44,11 @@ class _RegisterPageState extends State<RegisterPage> {
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
+    }).catchError((error) {
+      final snackBar = SnackBar(
+        content: Text('An error occurred: $error'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
   }
 
@@ -81,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 80),
                 const Text(
-                  "Sign In",
+                  "Sign Up",
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.blue,

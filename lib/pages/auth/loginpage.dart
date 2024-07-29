@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/pages/dashboard.dart';
-import 'package:fyp_mobileapp/widgets/field_component.dart';
+// import 'package:fyp_mobileapp/widgets/field_component.dart';
 import '../../api/auth_service.dart';
 
-import '../../widgets/login_register_component.dart';
+// import '../../widgets/login_register_component.dart';
 import 'registerpage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final AuthService _authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState

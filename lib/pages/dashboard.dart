@@ -3,7 +3,7 @@ import 'package:fyp_mobileapp/pages/decks_cards/deckspage.dart';
 import 'package:fyp_mobileapp/pages/homepage.dart';
 import 'package:fyp_mobileapp/pages/profilepage.dart';
 import 'package:fyp_mobileapp/pages/qrscanpage.dart';
-import 'package:fyp_mobileapp/pages/tradepage.dart';
+import 'package:fyp_mobileapp/pages/trades/tradepage.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({super.key});
@@ -63,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
             const BottomNavigationBarItem(
               icon: Icon(Icons.card_travel),
               label: 'Deck',
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Color(0xFF2F2F85),
             ),
             BottomNavigationBarItem(
               icon: GestureDetector(
@@ -74,17 +74,17 @@ class _DashboardState extends State<Dashboard> {
                 child: const Icon(Icons.qr_code_scanner),
               ),
               label: 'Scan',
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(0xFF2F2F85),
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.currency_exchange),
               label: 'Trade',
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(0xFF2F2F85),
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(0xFF2F2F85),
             ),
           ],
           currentIndex: _selectedIndex,

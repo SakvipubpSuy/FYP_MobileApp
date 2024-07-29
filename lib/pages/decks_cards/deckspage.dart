@@ -20,15 +20,16 @@ class _DeckPageState extends State<DeckPage> {
   void initState() {
     super.initState();
     futureDecks = DeckService().getDecks();
-    _simulateLoadingDelay();
+    // _simulateLoadingDelay();
   }
 
-  void _simulateLoadingDelay() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    setState(() {
-      _loadingComplete = true;
-    });
-  }
+  // void _simulateLoadingDelay() async {
+  //   await Future.delayed(const Duration(milliseconds: 100));
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _loadingComplete = true;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +49,16 @@ class _DeckPageState extends State<DeckPage> {
       body: FutureBuilder<List<DeckModel>>(
         future: futureDecks,
         builder: (context, snapshot) {
-          if (!_loadingComplete) {
-            return Center(child: Lottie.asset('assets/LoadingAnimation.json'));
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: Lottie.asset('assets/LoadingAnimation.json'));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No decks found'));
+            return const Center(child: Text('No decks found'));
           } else {
             List<DeckModel> decks = snapshot.data!;
             return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,

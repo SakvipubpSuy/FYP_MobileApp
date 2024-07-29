@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_mobileapp/pages/auth/landingpage.dart';
+import 'package:fyp_mobileapp/api/auth_service.dart';
+import 'package:fyp_mobileapp/models/user.dart';
+import 'auth/landingpage.dart';
 import 'package:fyp_mobileapp/widgets/login_register_component.dart';
 import 'package:lottie/lottie.dart';
-
 import '../api/user_service.dart';
 import '../api/card_service.dart';
 
@@ -14,41 +15,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final UserService _userService = UserService();
+  late Future<UserModel> _futureUser;
   final CardService _cardService = CardService();
-  Map<String, dynamic>? _user;
+  final AuthService _authService = AuthService();
+
+  UserModel? _user;
   int? _totalCards;
-  bool _isLoading = false;
   final String _defaultProfilePictureUrl =
       'https://as1.ftcdn.net/jpg/03/91/19/22/220_F_391192211_2w5pQpFV1aozYQhcIw3FqA35vuTxJKrB.jpg';
 
   @override
   void initState() {
     super.initState();
-    _fetchCurrentUser();
+    _futureUser = UserService().getCurrentUser();
     _fetchTotalCards();
-  }
-
-  // Method to fetch current user details
-  void _fetchCurrentUser() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final user = await _userService.getCurrentUser();
-      setState(() {
-        _user = user;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch user information: $e')),
-      );
-    } finally {
-      await Future.delayed(const Duration(milliseconds: 1000));
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   // Method to fetch the total number of cards the user has scanned
@@ -65,98 +45,95 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void _logout() async {
+    await _authService.logout();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LandingPage()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        body: Center(
-          child: Lottie.asset('assets/LoadingAnimation.json'),
-        ),
-      );
-    }
-
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 120),
-            if (_user != null) ...[
-              CircleAvatar(
-                backgroundImage: NetworkImage(
-                  _user != null &&
-                          _user!['profilePicture'] != null &&
-                          _user!['profilePicture'].isNotEmpty
-                      ? _user!['profilePicture']
-                      : _defaultProfilePictureUrl, // URL to your default profile picture
-                ),
-                radius: 100,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _user!['name'],
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                _user!['email'],
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: FutureBuilder<UserModel>(
+        future: _futureUser,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Lottie.asset('assets/LoadingAnimation.json'),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (snapshot.hasData) {
+            _user = snapshot.data;
+
+            return Center(
+              child: Column(
                 children: [
-                  Column(
+                  const SizedBox(height: 120),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      _user != null && _user!.profilePhotoPath != null
+                          ? _user!.profilePhotoPath!
+                          : _defaultProfilePictureUrl,
+                    ),
+                    radius: 80,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    _user!.name,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    _user!.email,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w400),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CircleBoxScreen(
-                        child: Text(
-                          _totalCards?.toString() ?? '0',
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Total Cards',
-                        style: TextStyle(fontSize: 16),
+                      Column(
+                        children: [
+                          CircleBoxScreen(
+                            child: Text(
+                              _totalCards?.toString() ?? '0',
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Total Cards',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  // Column(
-                  //   children: [
-                  //     CircleBoxScreen(
-                  //       child: Icon(Icons.tv),
-                  //     ),
-                  //     SizedBox(height: 10),
-                  //     Text(
-                  //       'Humidity',
-                  //       style: TextStyle(fontSize: 16),
-                  //     ),
-                  //   ],
-                  // ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50),
+                    child: CustomCard(
+                      buttonText: "Logout",
+                      onTap: _logout,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
-            ],
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: CustomCard(
-                buttonText: "Logout",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const LandingPage();
-                      },
-                    ),
-                  );
-                },
-                color: Colors.blue,
-              ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            return Center(
+              child: Text('No user data'),
+            );
+          }
+        },
       ),
     );
   }
@@ -173,7 +150,7 @@ class CircleBoxScreen extends StatelessWidget {
       height: 70,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white, // Inner circle color
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -183,7 +160,6 @@ class CircleBoxScreen extends StatelessWidget {
         ],
       ),
       child: Container(
-        // Margin for the colorful border
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
@@ -204,10 +180,10 @@ class CircleBoxScreen extends StatelessWidget {
         ),
         child: Center(
           child: Container(
-            margin: const EdgeInsets.all(5), // Margin for inner white circle
+            margin: const EdgeInsets.all(5),
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white, // Inner circle color
+              color: Colors.white,
             ),
             child: Center(child: child),
           ),

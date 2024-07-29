@@ -2,11 +2,10 @@ import 'dart:convert';
 import 'package:fyp_mobileapp/models/deck.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'api_url.dart';
 
 class DeckService {
-  static const String baseUrl =
-      "https://monkfish-app-pozus.ondigitalocean.app/api"; // Replace with your API URL
-  static final FlutterSecureStorage storage = FlutterSecureStorage();
+  String baseUrl = ApiURL.baseUrl;
 
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
