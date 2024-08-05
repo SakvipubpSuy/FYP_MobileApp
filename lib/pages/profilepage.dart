@@ -31,7 +31,6 @@ class _ProfilePageState extends State<ProfilePage> {
     _fetchTotalCards();
   }
 
-  // Method to fetch the total number of cards the user has scanned
   void _fetchTotalCards() async {
     try {
       final totalCards = await _cardService.countUserTotalCards();
@@ -59,83 +58,104 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<UserModel>(
-        future: _futureUser,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Lottie.asset('assets/Profilepage.json'),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else if (snapshot.hasData) {
-            _user = snapshot.data;
+      // appBar: AppBar(
+      //   title: const Text('Profile'),
+      //   backgroundColor: Color(0xFF2F2F85),
+      // ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
+        ),
+        child: FutureBuilder<UserModel>(
+          future: _futureUser,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Lottie.asset('assets/Profilepage.json'),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else if (snapshot.hasData) {
+              _user = snapshot.data;
 
-            return Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 120),
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      _user != null && _user!.profilePhotoPath != null
-                          ? _user!.profilePhotoPath!
-                          : _defaultProfilePictureUrl,
-                    ),
-                    radius: 80,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    _user!.name,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    _user!.email,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w400),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          CircleBoxScreen(
-                            child: Text(
-                              _totalCards?.toString() ?? '0',
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Total Cards',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ],
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 50),
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        _user != null && _user!.profilePhotoPath != null
+                            ? _user!.profilePhotoPath!
+                            : _defaultProfilePictureUrl,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: CustomCard(
-                      buttonText: "Logout",
-                      onTap: _logout,
-                      color: Colors.blue,
+                      radius: 80,
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return const Center(
-              child: Text('No user data'),
-            );
-          }
-        },
+                    const SizedBox(height: 20),
+                    Text(
+                      _user!.name,
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    Text(
+                      _user!.email,
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            CircleBoxScreen(
+                              child: Text(
+                                _totalCards?.toString() ?? '0',
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Total Cards',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: CustomCard(
+                        buttonText: "Logout",
+                        onTap: _logout,
+                        color: Colors.blueAccent,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return const Center(
+                child: Text('No user data'),
+              );
+            }
+          },
+        ),
       ),
     );
   }
@@ -152,43 +172,38 @@ class CircleBoxScreen extends StatelessWidget {
       height: 70,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFFFD700),
+            Color(0xFFFFC107),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.transparent,
-            width: 0,
-          ),
-          gradient: const SweepGradient(
-            colors: [
-              Colors.red,
-              Colors.yellow,
-              Colors.orange,
-              Colors.green,
-              Colors.blue,
-              Colors.purple,
-              Colors.red,
+      child: Center(
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 5,
+                offset: const Offset(0, 3),
+              ),
             ],
           ),
-        ),
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.all(5),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ),
-            child: Center(child: child),
-          ),
+          child: Center(child: child),
         ),
       ),
     );

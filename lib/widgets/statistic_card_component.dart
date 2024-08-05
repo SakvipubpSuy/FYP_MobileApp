@@ -1,54 +1,60 @@
 import 'package:flutter/material.dart';
 
-enum FontSizeOption {
-  small,
-  medium,
-}
+enum FontSizeOption { small, medium, large }
 
 class StatisticCard extends StatelessWidget {
+  final Gradient gradient;
   final String title;
   final String value;
-  final Color color;
-  final FontSizeOption fontSizeOption; // Accept enum value
+  final FontSizeOption fontSizeOption;
 
   const StatisticCard({
-    Key? key,
+    super.key,
+    required this.gradient,
     required this.title,
     required this.value,
-    required this.color,
-    required this.fontSizeOption, // Accept enum value
-  }) : super(key: key);
+    required this.fontSizeOption,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Map enum to font size
-    double fontSize;
-    switch (fontSizeOption) {
-      case FontSizeOption.small:
-        fontSize = 16.0;
-        break;
-      case FontSizeOption.medium:
-        fontSize = 20.0;
-        break;
-    }
-
-    final TextStyle textStyle =
-        TextStyle(fontSize: fontSize, color: Colors.white);
-
     return Expanded(
-      flex: 1,
-      child: Card(
-        color: color,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: textStyle),
-              const SizedBox(height: 10),
-              Text(value, style: textStyle),
-            ],
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: fontSizeOption == FontSizeOption.small
+                    ? 16
+                    : fontSizeOption == FontSizeOption.medium
+                        ? 18
+                        : 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              value,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: fontSizeOption == FontSizeOption.small
+                    ? 22
+                    : fontSizeOption == FontSizeOption.medium
+                        ? 24
+                        : 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

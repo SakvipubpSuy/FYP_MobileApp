@@ -56,71 +56,16 @@ class _TradePageState extends State<TradePage> {
     }
   }
 
-//FETCH CARD WITH VERSION CHECK
-  // Future<void> _fetchTradableCard() async {
-  //   try {
-  //     if (userID != null) {
-  //       final decks = await _deckService.getDecks();
-  //       final deckMap = <String, List<CardModel>>{};
-
-  //       // Fetch cards for each deck
-  //       for (var deck in decks) {
-  //         final deckName = deck.deckName;
-  //         final cards = await _cardService.getCardsByDeck(deck.deckId);
-  //         final latestVersions = <String, int>{};
-
-  //         //   // Find the latest version for each card in the deck
-  //         for (var card in cards) {
-  //           final cardName = card.cardName;
-  //           final cardVersion = card.cardVersion;
-  //           if (latestVersions.containsKey(cardName)) {
-  //             if (latestVersions[cardName]! < cardVersion) {
-  //               latestVersions[cardName] = cardVersion;
-  //             }
-  //           } else {
-  //             latestVersions[cardName] = cardVersion;
-  //           }
-  //         }
-
-  //         //   // // Filter out the latest versions
-  //         final filteredCards = cards.where((card) {
-  //           final cardName = card.cardName;
-  //           final cardVersion = card.cardVersion;
-  //           return cardVersion < latestVersions[cardName]!;
-  //         }).toList();
-
-  //         // Only add decks that have tradable cards
-  //         if (filteredCards.isNotEmpty) {
-  //           deckMap[deckName] = filteredCards;
-  //         }
-  //       }
-  //       setState(() {
-  //         _tradableCards = deckMap;
-  //       });
-  //     }
-  //   } catch (error) {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Failed to fetch decks: $error')),
-  //       );
-  //     }
-  //   }
-  // }
-
-//FETCH CARD WITHOUT VERSION CHECK
-
   Future<void> _fetchTradableCard() async {
     try {
       if (userID != null) {
         final decks = await _deckService.getDecks();
         final deckMap = <String, List<CardModel>>{};
 
-        // Fetch cards for each deck
         for (var deck in decks) {
           final deckName = deck.deckName;
           final cards = await _cardService.getCardsByDeck(deck.deckId);
 
-          // Add all cards to the deck, regardless of version
           if (cards.isNotEmpty) {
             deckMap[deckName] = cards;
           }
@@ -278,14 +223,26 @@ class _TradePageState extends State<TradePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Trade Page'),
+        backgroundColor: Color(0xFF2F2F85),
+        title: Text(
+          'Trade Page',
+          style: TextStyle(
+            color: Colors.yellow[700],
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           Stack(
             children: [
               Transform.scale(
                 scale: 1.5, // Adjust this value to make the button bigger
                 child: IconButton(
-                  icon: const Icon(Icons.notifications_none, size: 30),
+                  icon: Icon(
+                    Icons.notifications_none,
+                    size: 24,
+                    color: Colors.yellow[700],
+                  ),
                   onPressed: _navigateToTradeDetailsPage,
                 ),
               ),
@@ -328,10 +285,15 @@ class _TradePageState extends State<TradePage> {
               controller: _searchController,
               decoration: InputDecoration(
                 labelText: 'Search Players',
-                prefixIcon: const Icon(Icons.search),
+                labelStyle: TextStyle(color: Color(0xFF2F2F85)),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF2F2F85)),
                 hintText: 'Search Players',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(color: Color(0xFF2F2F85)),
                 ),
               ),
             ),
@@ -403,3 +365,56 @@ class _TradePageState extends State<TradePage> {
     );
   }
 }
+
+
+
+//FETCH CARD WITH VERSION CHECK
+  // Future<void> _fetchTradableCard() async {
+  //   try {
+  //     if (userID != null) {
+  //       final decks = await _deckService.getDecks();
+  //       final deckMap = <String, List<CardModel>>{};
+
+  //       // Fetch cards for each deck
+  //       for (var deck in decks) {
+  //         final deckName = deck.deckName;
+  //         final cards = await _cardService.getCardsByDeck(deck.deckId);
+  //         final latestVersions = <String, int>{};
+
+  //         //   // Find the latest version for each card in the deck
+  //         for (var card in cards) {
+  //           final cardName = card.cardName;
+  //           final cardVersion = card.cardVersion;
+  //           if (latestVersions.containsKey(cardName)) {
+  //             if (latestVersions[cardName]! < cardVersion) {
+  //               latestVersions[cardName] = cardVersion;
+  //             }
+  //           } else {
+  //             latestVersions[cardName] = cardVersion;
+  //           }
+  //         }
+
+  //         //   // // Filter out the latest versions
+  //         final filteredCards = cards.where((card) {
+  //           final cardName = card.cardName;
+  //           final cardVersion = card.cardVersion;
+  //           return cardVersion < latestVersions[cardName]!;
+  //         }).toList();
+
+  //         // Only add decks that have tradable cards
+  //         if (filteredCards.isNotEmpty) {
+  //           deckMap[deckName] = filteredCards;
+  //         }
+  //       }
+  //       setState(() {
+  //         _tradableCards = deckMap;
+  //       });
+  //     }
+  //   } catch (error) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Failed to fetch decks: $error')),
+  //       );
+  //     }
+  //   }
+  // }

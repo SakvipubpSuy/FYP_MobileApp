@@ -42,12 +42,12 @@ class _DashboardState extends State<Dashboard> {
             const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
-              backgroundColor: Color(0xFF2F2F85),
+              backgroundColor: Color(0xFF1A1A4D),
             ),
             const BottomNavigationBarItem(
-              icon: Icon(Icons.card_travel),
+              icon: Icon(Icons.collections_bookmark),
               label: 'Deck',
-              backgroundColor: Color(0xFF2F2F85),
+              backgroundColor: Color(0xFF1A1A4D),
             ),
             BottomNavigationBarItem(
               icon: GestureDetector(
@@ -58,17 +58,17 @@ class _DashboardState extends State<Dashboard> {
                 child: const Icon(Icons.qr_code_scanner),
               ),
               label: 'Scan',
-              backgroundColor: const Color(0xFF2F2F85),
+              backgroundColor: const Color(0xFF1A1A4D),
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.currency_exchange),
               label: 'Trade',
-              backgroundColor: Color(0xFF2F2F85),
+              backgroundColor: Color(0xFF1A1A4D),
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Profile',
-              backgroundColor: Color(0xFF2F2F85),
+              backgroundColor: Color(0xFF1A1A4D),
             ),
           ],
           currentIndex: _selectedIndex,
