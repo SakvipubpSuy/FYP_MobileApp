@@ -38,6 +38,23 @@ class CardService {
     }
   }
 
+  Future<CardModel> getCardByID(String cardId) async {
+    String? token = await _storage.read(key: 'auth_token');
+    final response = await http.get(
+      Uri.parse('$baseUrl/cards/$cardId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return responseData['count'];
+    } else {
+      throw Exception('Failed to fetch trade counts');
+    }
+  }
+
   Future<void> sendScanResult(BuildContext context, String cardId) async {
     String? token = await _storage.read(key: 'auth_token');
 

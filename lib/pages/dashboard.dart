@@ -6,7 +6,7 @@ import 'package:fyp_mobileapp/pages/qrscanpage.dart';
 import 'package:fyp_mobileapp/pages/trades/tradepage.dart';
 
 class Dashboard extends StatefulWidget {
-  Dashboard({super.key});
+  const Dashboard({super.key});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -32,22 +32,6 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   backgroundColor: Colors.black,
-        //   automaticallyImplyLeading: false,
-        // ),
-        // body: Center(
-        //   child: InkWell(
-        //     onTap: () {
-        //       Navigator.push(context,
-        //           MaterialPageRoute(builder: (context) => const QRScan()));
-        //     },
-        //     child: const Text(
-        //       'Welcome to the Dashboard',
-        //       style: TextStyle(fontSize: 24),
-        //     ),
-        //   ),
-        // ),
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
@@ -74,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
                 child: const Icon(Icons.qr_code_scanner),
               ),
               label: 'Scan',
-              backgroundColor: Color(0xFF2F2F85),
+              backgroundColor: const Color(0xFF2F2F85),
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.currency_exchange),

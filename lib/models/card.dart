@@ -1,17 +1,3 @@
-// class CardModel {
-//   final String title;
-//   final String content;
-
-//   CardModel({required this.title, required this.content});
-
-//   factory CardModel.fromJson(Map<String, dynamic> json) {
-//     return CardModel(
-//       title: json['title'],
-//       content: json['content'],
-//     );
-//   }
-// }
-
 import 'package:fyp_mobileapp/models/card_tier.dart';
 
 class CardModel {
@@ -22,8 +8,8 @@ class CardModel {
   final String cardName;
   final String cardDescription;
   final int cardVersion;
-  final String createdAt;
-  final String updatedAt;
+  final String? createdAt;
+  final String? updatedAt;
   final CardTierModel cardTier;
 
   CardModel({
@@ -34,8 +20,8 @@ class CardModel {
     required this.cardName,
     required this.cardDescription,
     required this.cardVersion,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.cardTier,
   });
 

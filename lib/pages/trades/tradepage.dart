@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../api/card_service.dart';
 import '../../api/trade_service.dart';
+import '../../api/deck_service.dart';
 import '../../api/user_service.dart';
+import '../../models/card.dart';
 import 'tradedetailspage.dart';
 
 class TradePage extends StatefulWidget {
@@ -14,18 +17,23 @@ class TradePage extends StatefulWidget {
 class _TradePageState extends State<TradePage> {
   final TextEditingController _searchController = TextEditingController();
   final TradeService _tradeService = TradeService();
+  final DeckService _deckService = DeckService();
+  final CardService _cardService = CardService();
+  final UserService _userService = UserService();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   String? userID;
   int _incomingTradeCount = 0;
   bool _isLoading = true;
+  Map<String, List<CardModel>> _tradableCards = {};
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     _getUserID();
-    _countIncomingTrades();
+    _countTrades();
+    _fetchTradableCard();
   }
 
   Future<void> _getUserID() async {
@@ -33,11 +41,11 @@ class _TradePageState extends State<TradePage> {
     setState(() {});
   }
 
-  Future<void> _countIncomingTrades() async {
+  Future<void> _countTrades() async {
     try {
-      int count = await _tradeService.countIncomingTrades();
+      int incomingCount = await _tradeService.countTrades('incoming');
       setState(() {
-        _incomingTradeCount = count;
+        _incomingTradeCount = incomingCount;
         _isLoading = false;
       });
     } catch (e) {
@@ -48,15 +56,98 @@ class _TradePageState extends State<TradePage> {
     }
   }
 
+//FETCH CARD WITH VERSION CHECK
+  // Future<void> _fetchTradableCard() async {
+  //   try {
+  //     if (userID != null) {
+  //       final decks = await _deckService.getDecks();
+  //       final deckMap = <String, List<CardModel>>{};
+
+  //       // Fetch cards for each deck
+  //       for (var deck in decks) {
+  //         final deckName = deck.deckName;
+  //         final cards = await _cardService.getCardsByDeck(deck.deckId);
+  //         final latestVersions = <String, int>{};
+
+  //         //   // Find the latest version for each card in the deck
+  //         for (var card in cards) {
+  //           final cardName = card.cardName;
+  //           final cardVersion = card.cardVersion;
+  //           if (latestVersions.containsKey(cardName)) {
+  //             if (latestVersions[cardName]! < cardVersion) {
+  //               latestVersions[cardName] = cardVersion;
+  //             }
+  //           } else {
+  //             latestVersions[cardName] = cardVersion;
+  //           }
+  //         }
+
+  //         //   // // Filter out the latest versions
+  //         final filteredCards = cards.where((card) {
+  //           final cardName = card.cardName;
+  //           final cardVersion = card.cardVersion;
+  //           return cardVersion < latestVersions[cardName]!;
+  //         }).toList();
+
+  //         // Only add decks that have tradable cards
+  //         if (filteredCards.isNotEmpty) {
+  //           deckMap[deckName] = filteredCards;
+  //         }
+  //       }
+  //       setState(() {
+  //         _tradableCards = deckMap;
+  //       });
+  //     }
+  //   } catch (error) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Failed to fetch decks: $error')),
+  //       );
+  //     }
+  //   }
+  // }
+
+//FETCH CARD WITHOUT VERSION CHECK
+
+  Future<void> _fetchTradableCard() async {
+    try {
+      if (userID != null) {
+        final decks = await _deckService.getDecks();
+        final deckMap = <String, List<CardModel>>{};
+
+        // Fetch cards for each deck
+        for (var deck in decks) {
+          final deckName = deck.deckName;
+          final cards = await _cardService.getCardsByDeck(deck.deckId);
+
+          // Add all cards to the deck, regardless of version
+          if (cards.isNotEmpty) {
+            deckMap[deckName] = cards;
+          }
+        }
+
+        setState(() {
+          _tradableCards = deckMap;
+        });
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch decks: $error')),
+        );
+      }
+    }
+  }
+
   void _navigateToTradeDetailsPage() {
     Navigator.of(context)
         .push(MaterialPageRoute(
             builder: (context) => TradeDetailsPage(
                   userId: int.parse(userID!),
-                  onTradeActionCompleted: () => _countIncomingTrades(),
+                  onTradeActionCompleted: () => _countTrades(),
                 )))
         .then((_) =>
-            _countIncomingTrades()); // Refresh incoming trade count after returning
+            _countTrades()); // Refresh incoming trade count after returning
   }
 
   List<dynamic> _searchResults = [];
@@ -67,7 +158,7 @@ class _TradePageState extends State<TradePage> {
       _isSearching = true;
     });
 
-    UserService().getAllUsers().then((users) {
+    _userService.getAllUsers().then((users) {
       final currentUserID = userID;
       setState(() {
         _isSearching = false;
@@ -98,8 +189,88 @@ class _TradePageState extends State<TradePage> {
     super.dispose();
   }
 
+  Widget _buildDeckSelectionDialog() {
+    String? selectedDeck;
+    int? selectedCardId;
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: const Text('Select Card to Trade'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButton<String>(
+                hint: const Text('Select Deck'),
+                value: selectedDeck,
+                onChanged: (value) {
+                  setState(() {
+                    selectedDeck = value;
+                    selectedCardId = null;
+                  });
+                },
+                items: _tradableCards.keys.map((deckName) {
+                  return DropdownMenuItem<String>(
+                    value: deckName,
+                    child: Text(deckName),
+                  );
+                }).toList(),
+              ),
+              if (selectedDeck != null) ...[
+                const SizedBox(height: 16),
+                Text('Select Card from $selectedDeck'),
+                ..._tradableCards[selectedDeck]!.map<Widget>((card) {
+                  return RadioListTile<int>(
+                    title: Text(card.cardName),
+                    value: card.cardId,
+                    groupValue: selectedCardId,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCardId = value;
+                      });
+                    },
+                  );
+                }),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(selectedCardId),
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _sendTradeRequest(int initiatorId, int receiverId) async {
-    await _tradeService.sendTradeRequest(context, initiatorId, receiverId);
+    if (_tradableCards.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No tradable cards available')),
+      );
+      return;
+    }
+
+    int? selectedCardId = await showDialog<int>(
+      context: context,
+      builder: (context) => _buildDeckSelectionDialog(),
+    );
+
+    if (selectedCardId != null) {
+      // Send the trade request with the selected card ID
+      if (mounted) {
+        await _tradeService.sendTradeRequest(
+            context, initiatorId, receiverId, selectedCardId);
+      }
+      // Refresh the user cards after sending the trade request
+      await _fetchTradableCard();
+    }
   }
 
   @override
@@ -209,11 +380,12 @@ class _TradePageState extends State<TradePage> {
                               ),
                               TextButton(
                                 onPressed: () async {
-                                  Navigator.of(context).pop();
+                                  await _fetchTradableCard();
                                   await _sendTradeRequest(
                                     int.parse(userID!),
                                     user['id'],
                                   );
+                                  Navigator.of(context).pop();
                                 },
                                 child: const Text('Confirm'),
                               ),

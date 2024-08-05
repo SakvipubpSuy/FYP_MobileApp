@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fyp_mobileapp/models/card.dart';
 // import 'package:fyp_mobileapp/models/user.dart';
 import 'package:fyp_mobileapp/models/trade.dart';
 import 'package:http/http.dart' as http;
@@ -11,8 +12,8 @@ class TradeService {
 
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  Future<void> sendTradeRequest(
-      BuildContext context, int initiatorId, int receiverId) async {
+  Future<void> sendTradeRequest(BuildContext context, int initiatorId,
+      int receiverId, int selectedCardId) async {
     String? token = await _storage.read(key: 'auth_token');
 
     if (token == null) {
@@ -33,6 +34,7 @@ class TradeService {
         body: jsonEncode({
           'initiator_id': initiatorId,
           'receiver_id': receiverId,
+          'initiator_card_id': selectedCardId,
         }),
       );
 
@@ -63,8 +65,8 @@ class TradeService {
     }
   }
 
-  Future<int> countIncomingTrades() async {
-    final url = Uri.parse('$baseUrl/trade/count-trade-request');
+  Future<int> countTrades(String type) async {
+    final url = Uri.parse('$baseUrl/trade/count-trade-request?type=$type');
 
     String? token = await _storage.read(key: 'auth_token');
 
@@ -75,11 +77,12 @@ class TradeService {
         'Authorization': 'Bearer $token',
       },
     );
+
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      return responseData['total_trade_request'];
+      return responseData['count'];
     } else {
-      throw Exception('Failed to fetch incoming trades');
+      throw Exception('Failed to fetch trade counts');
     }
   }
 
@@ -105,16 +108,26 @@ class TradeService {
           (responseData['outgoing_trades'] as List)
               .map((data) => TradeModel.fromJson(data))
               .toList();
+      List<TradeModel> pendingApprovalTrades =
+          (responseData['pending_approval_trades'] as List)
+              .map((data) => TradeModel.fromJson(data))
+              .toList();
+      List<TradeModel> completedTrades =
+          (responseData['completed_trades'] as List)
+              .map((data) => TradeModel.fromJson(data))
+              .toList();
       return {
         'incoming_trades': incomingTrades,
         'outgoing_trades': outgoingTrades,
+        'pending_approval_trades': pendingApprovalTrades,
+        'completed_trades': completedTrades,
       };
     } else {
       throw Exception('Failed to fetch trades');
     }
   }
 
-  Future<void> acceptTradeRequest(int tradeId) async {
+  Future<void> acceptTradeRequest(int tradeId, int receiverCardId) async {
     final url = Uri.parse('$baseUrl/trade/accept-trade/$tradeId');
     String? token = await _storage.read(key: 'auth_token');
 
@@ -124,6 +137,9 @@ class TradeService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
+      body: jsonEncode({
+        'receiver_card_id': receiverCardId,
+      }),
     );
 
     if (response.statusCode == 200) {
@@ -139,6 +155,22 @@ class TradeService {
         }
       }
       throw Exception(errorMessage);
+    }
+  }
+
+  Future<void> completeTradeRequest(int tradeId) async {
+    final url = Uri.parse('$baseUrl/trade/complete-trade/$tradeId');
+    String? token = await _storage.read(key: 'auth_token');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to complete trade request');
     }
   }
 
@@ -195,6 +227,23 @@ class TradeService {
         }
       }
       throw Exception(errorMessage);
+    }
+  }
+
+  Future<void> revertTradeRequest(int tradeId) async {
+    final url = Uri.parse('$baseUrl/trade/revert-trade/$tradeId');
+    String? token = await _storage.read(key: 'auth_token');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to revert trade');
     }
   }
 }

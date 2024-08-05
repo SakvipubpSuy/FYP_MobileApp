@@ -39,9 +39,11 @@ class _ProfilePageState extends State<ProfilePage> {
         _totalCards = totalCards;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch total cards: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch total cards: $e')),
+        );
+      }
     }
   }
 
@@ -62,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Lottie.asset('assets/LoadingAnimation.json'),
+              child: Lottie.asset('assets/Profilepage.json'),
             );
           } else if (snapshot.hasError) {
             return Center(
@@ -129,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             );
           } else {
-            return Center(
+            return const Center(
               child: Text('No user data'),
             );
           }

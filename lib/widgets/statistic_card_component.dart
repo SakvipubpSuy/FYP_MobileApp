@@ -1,27 +1,40 @@
 import 'package:flutter/material.dart';
 
+enum FontSizeOption {
+  small,
+  medium,
+}
+
 class StatisticCard extends StatelessWidget {
-  final Color color;
   final String title;
   final String value;
+  final Color color;
+  final FontSizeOption fontSizeOption; // Accept enum value
 
   const StatisticCard({
-    super.key,
-    required this.color,
+    Key? key,
     required this.title,
     required this.value,
-  });
+    required this.color,
+    required this.fontSizeOption, // Accept enum value
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const textStyle20 = TextStyle(
-      color: Colors.white,
-      fontSize: 20,
-    );
-    const textStyle16 = TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-    );
+    // Map enum to font size
+    double fontSize;
+    switch (fontSizeOption) {
+      case FontSizeOption.small:
+        fontSize = 16.0;
+        break;
+      case FontSizeOption.medium:
+        fontSize = 20.0;
+        break;
+    }
+
+    final TextStyle textStyle =
+        TextStyle(fontSize: fontSize, color: Colors.white);
+
     return Expanded(
       flex: 1,
       child: Card(
@@ -31,15 +44,9 @@ class StatisticCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: textStyle20,
-              ),
+              Text(title, style: textStyle),
               const SizedBox(height: 10),
-              Text(
-                value,
-                style: textStyle16,
-              ),
+              Text(value, style: textStyle),
             ],
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:fyp_mobileapp/models/quest.dart';
 import 'package:fyp_mobileapp/models/user.dart';
 import 'package:lottie/lottie.dart';
 import '../api/card_service.dart';
+import '../api/trade_service.dart'; // Add this import for trade counts
 import '../api/user_service.dart';
 import '../utils/route.dart';
 import '../widgets/statistic_card_component.dart';
@@ -19,8 +20,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final CardService _cardService = CardService();
   final CardService _questService = CardService();
+  final TradeService _tradeService =
+      TradeService(); // Add this for trade counts
+
   late Future<UserModel> _futureUser;
   late Future<List<QuestionModel>> _futureQuest;
+  Future<int>? _incomingTradeCount; // Initialize with nullable
+  Future<int>? _outgoingTradeCount; // Initialize with nullable
+  Future<int>? _pendingApprovalTradeCount; // Initialize with nullable
 
   int? _totalCards;
   UserModel? _user;
@@ -31,6 +38,9 @@ class _HomePageState extends State<HomePage> {
     _fetchUserData();
     _fetchTotalCards();
     _futureQuest = _questService.getQuests();
+    _incomingTradeCount = _tradeService.countTrades('incoming');
+    _outgoingTradeCount = _tradeService.countTrades('outgoing');
+    _pendingApprovalTradeCount = _tradeService.countTrades('pending_approval');
   }
 
   void _fetchUserData() {
@@ -78,17 +88,17 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: FutureBuilder<UserModel>(
           future: _futureUser,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: Lottie.asset('assets/Homepage.json'),
               );
-            } else if (snapshot.hasError) {
+            } else if (userSnapshot.hasError) {
               return Center(
-                child: Text('Error: ${snapshot.error}'),
+                child: Text('Error: ${userSnapshot.error}'),
               );
-            } else if (snapshot.hasData) {
-              _user = snapshot.data;
+            } else if (userSnapshot.hasData) {
+              _user = userSnapshot.data;
               return Stack(
                 children: [
                   Padding(
@@ -142,34 +152,60 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.amber,
                               title: 'Total Energy',
                               value: _user?.energy.toString() ?? '0',
+                              fontSizeOption: FontSizeOption.medium,
                             ),
                             const SizedBox(width: 10),
                             StatisticCard(
                               color: Colors.pink,
                               title: 'Your Card',
                               value: _totalCards?.toString() ?? '0',
+                              fontSizeOption: FontSizeOption.medium,
                             ),
                           ],
                         ),
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            StatisticCard(
-                              color: Colors.green,
-                              title: 'Title 1',
-                              value: 'Value 1',
+                            FutureBuilder<int>(
+                              future: _incomingTradeCount,
+                              builder: (context, tradeSnapshot) {
+                                return StatisticCard(
+                                  color: Colors.green,
+                                  title: 'Incoming Trades',
+                                  value: tradeSnapshot.hasData
+                                      ? tradeSnapshot.data.toString()
+                                      : '0',
+                                  fontSizeOption: FontSizeOption.small,
+                                );
+                              },
                             ),
                             const SizedBox(width: 5),
-                            StatisticCard(
-                              color: Colors.brown,
-                              title: 'Title 2',
-                              value: 'Value 2',
+                            FutureBuilder<int>(
+                              future: _outgoingTradeCount,
+                              builder: (context, tradeSnapshot) {
+                                return StatisticCard(
+                                  color: Colors.brown,
+                                  title: 'Outgoing Trades',
+                                  value: tradeSnapshot.hasData
+                                      ? tradeSnapshot.data.toString()
+                                      : '0',
+                                  fontSizeOption: FontSizeOption.small,
+                                );
+                              },
                             ),
                             const SizedBox(width: 5),
-                            StatisticCard(
-                              color: Colors.deepOrange,
-                              title: 'Title 3',
-                              value: 'Value 3',
+                            FutureBuilder<int>(
+                              future: _pendingApprovalTradeCount,
+                              builder: (context, tradeSnapshot) {
+                                return StatisticCard(
+                                  color: Colors.deepOrange,
+                                  title: 'Pending Approval',
+                                  value: tradeSnapshot.hasData
+                                      ? tradeSnapshot.data.toString()
+                                      : '0',
+                                  fontSizeOption: FontSizeOption.small,
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -185,8 +221,7 @@ class _HomePageState extends State<HomePage> {
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.5,
                         decoration: const BoxDecoration(
-                          color:
-                              Colors.white, // Change this to your desired color
+                          color: Colors.white,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20),
@@ -207,18 +242,18 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: FutureBuilder<List<QuestionModel>>(
                                   future: _futureQuest,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
+                                  builder: (context, questSnapshot) {
+                                    if (questSnapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
                                           child: CircularProgressIndicator());
-                                    } else if (snapshot.hasError) {
+                                    } else if (questSnapshot.hasError) {
                                       return Center(
-                                          child:
-                                              Text('Error: ${snapshot.error}'));
-                                    } else if (snapshot.hasData) {
+                                          child: Text(
+                                              'Error: ${questSnapshot.error}'));
+                                    } else if (questSnapshot.hasData) {
                                       List<QuestionModel> quests =
-                                          snapshot.data!;
+                                          questSnapshot.data!;
                                       return ListView.builder(
                                         itemCount: quests.length,
                                         itemBuilder: (context, index) {
@@ -232,9 +267,10 @@ class _HomePageState extends State<HomePage> {
                                                   MaterialPageRoute(
                                                     builder: (context) =>
                                                         QuestionDetailPage(
-                                                            quest: quest,
-                                                            onEnergyUpdated:
-                                                                _updateUserData),
+                                                      quest: quest,
+                                                      onEnergyUpdated:
+                                                          _updateUserData,
+                                                    ),
                                                   ),
                                                 );
                                               },
@@ -244,8 +280,7 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     } else {
                                       return Center(
-                                        child: Text('No quests available'),
-                                      );
+                                          child: Text('No quests available'));
                                     }
                                   },
                                 ),
