@@ -391,8 +391,32 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+    if (trades.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              color: Colors.yellow[700],
+              size: 80,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'No trades found',
+              style: TextStyle(
+                color: Colors.amber,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return ListView.builder(
+      padding: EdgeInsets.all(10.0),
       itemCount: trades.length,
       itemBuilder: (context, index) {
         final trade = trades[index];
@@ -406,45 +430,59 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trades'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Container(
-            alignment: Alignment.centerLeft,
-            child: TabBar(
-              tabAlignment: TabAlignment.center,
-              controller: _tabController,
-              isScrollable: true,
-              tabs: const [
-                Tab(text: 'Incoming'),
-                Tab(text: 'Outgoing'),
-                Tab(text: 'Pending Approval'),
-                Tab(text: 'Completed'),
-              ],
-              indicatorPadding: const EdgeInsets.symmetric(
-                  horizontal: 10.0), // Remove padding around the indicator
-              labelPadding: const EdgeInsets.symmetric(horizontal: 20.0),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.amber),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Trade Details',
+          style: TextStyle(color: Colors.amber),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
           ),
         ),
+        bottom: TabBar(
+          unselectedLabelColor: Colors.white,
+          tabAlignment: TabAlignment.start,
+          isScrollable: true,
+          labelColor: Colors.amber,
+          controller: _tabController,
+          indicatorColor: Colors.amber,
+          tabs: const [
+            Tab(text: 'Incoming'),
+            Tab(text: 'Outgoing'),
+            Tab(text: 'Pending Approval '),
+            Tab(text: 'Completed'),
+          ],
+        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Container(
-              color: Colors.red.withOpacity(0.1),
-              child: _buildTradeList(incomingTrades, true, false, false)),
-          Container(
-              color: Colors.blue.withOpacity(0.1),
-              child: _buildTradeList(outgoingTrades, false, false, false)),
-          Container(
-              color: Colors.yellow.withOpacity(0.1),
-              child:
-                  _buildTradeList(pendingApprovalTrades, false, true, false)),
-          Container(
-              color: Colors.green.withOpacity(0.1),
-              child: _buildTradeList(completedTrades, false, false, true)),
-        ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
+        ),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildTradeList(incomingTrades, true, false, false),
+                  _buildTradeList(outgoingTrades, false, false, false),
+                  _buildTradeList(pendingApprovalTrades, false, true, false),
+                  _buildTradeList(completedTrades, false, false, true),
+                ],
+              ),
       ),
     );
   }

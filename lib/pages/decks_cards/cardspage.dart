@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/models/card.dart';
-import 'package:fyp_mobileapp/models/deck.dart';
 import 'package:fyp_mobileapp/pages/decks_cards/individualcardpage.dart';
 import 'package:lottie/lottie.dart';
 import '../../api/card_service.dart';
@@ -18,15 +17,12 @@ class CardPage extends StatefulWidget {
   @override
   State<CardPage> createState() => _CardPageState();
 }
-// List<CardModel> cards = List<CardModel>.generate(
-//   25,
-//   (index) =>
-//       CardModel(title: 'Item $index', content: 'Content for card $index'),
-// );
 
 class _CardPageState extends State<CardPage> {
   late Future<List<CardModel>> futureCards;
   bool _loadingComplete = false;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -42,48 +38,163 @@ class _CardPageState extends State<CardPage> {
     });
   }
 
+  void _updateSearchQuery(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: InkWell(
-          onTap: () {
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.amber),
+          onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Icon(Icons.keyboard_arrow_left),
         ),
-        title: Text(widget.deckName),
+        title: const Text(
+          'Cards',
+          style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Color(0xFF2F2F85),
       ),
-      body: FutureBuilder<List<CardModel>>(
-        future: futureCards,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: Lottie.asset('assets/Cardpage.json'));
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No cards found'));
-          } else {
-            List<CardModel> cards = snapshot.data!;
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 2 / 3,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              color: Color(0xFF2F2F85),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search cards...',
+                          hintStyle: TextStyle(color: Colors.yellow[700]),
+                          border: InputBorder.none,
+                          prefixIcon:
+                              Icon(Icons.search, color: Colors.yellow[700]),
+                        ),
+                        style: TextStyle(color: Colors.yellow[700]),
+                        onChanged: _updateSearchQuery,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              itemCount: cards.length,
-              padding: const EdgeInsets.all(10.0),
-              itemBuilder: (context, index) {
-                CardModel card = cards[index];
-                return CardWidget(
-                  card: card,
-                  deckName: widget.deckName,
-                );
-              },
-            );
-          }
-        },
+            ),
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+                child: FutureBuilder<List<CardModel>>(
+                  future: futureCards,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          child: Lottie.asset('assets/Cardpage.json'));
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.yellow[700],
+                              size: 80,
+                            ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'No cards found',
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      List<CardModel> cards = snapshot.data!
+                          .where((card) => card.cardName
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase()))
+                          .toList();
+
+                      if (cards.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.yellow[700],
+                                size: 80,
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'No cards found',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2 / 3,
+                        ),
+                        itemCount: cards.length,
+                        padding: const EdgeInsets.all(10.0),
+                        itemBuilder: (context, index) {
+                          CardModel card = cards[index];
+                          return CardWidget(
+                            card: card,
+                            deckName: widget.deckName,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

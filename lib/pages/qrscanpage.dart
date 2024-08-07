@@ -33,31 +33,60 @@ class _QRScanState extends State<QRScan> {
         automaticallyImplyLeading: false,
         title: const Text("Scan QRCODE",
             style: TextStyle(
-              color: Colors.black,
+              color: Colors.amber,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             )),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFF2F2F85),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 4,
-            child: isScanning ? _buildQrView(context) : Container(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
           ),
-          Expanded(
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isScanning = true;
-                  });
-                },
-                child: const Text('Start Scanning'),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 4,
+              child: isScanning ? _buildQrView(context) : Container(),
+            ),
+            Expanded(
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isScanning = true;
+                      });
+                    },
+                    child: const Text(
+                      'Start Scanning',
+                      style: TextStyle(color: Colors.amber),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

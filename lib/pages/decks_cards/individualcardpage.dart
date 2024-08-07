@@ -30,40 +30,60 @@ class _IndividualCardPageState extends State<IndividualCardPage> {
     final card = widget.individualcard;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Individual Card Page'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.amber),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Invididual Card',
+          style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Color(0xFF2F2F85),
       ),
-      body: Center(
-        child: FlipCard(
-          controller: _controller,
-          flipOnTouch: false,
-          front: GestureDetector(
-            onTap: () => _controller.toggleCard(),
-            onPanUpdate: (details) {
-              if (details.delta.dx < -10 || details.delta.dx > 10) {
-                _controller.toggleCard();
-              }
-            },
-            child: CardView(
-              card: card,
-              borderColor: Color(
-                  int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
-              isFront: true,
-              deckName: widget.deckName,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
           ),
-          back: GestureDetector(
-            onTap: () => _controller.toggleCard(),
-            onPanUpdate: (details) {
-              if (details.delta.dx < -10 || details.delta.dx > 10) {
-                _controller.toggleCard();
-              }
-            },
-            child: CardView(
-              card: card,
-              borderColor: Color(
-                  int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
-              isFront: false,
-              deckName: widget.deckName,
+        ),
+        child: Center(
+          child: FlipCard(
+            controller: _controller,
+            flipOnTouch: false,
+            front: GestureDetector(
+              onTap: () => _controller.toggleCard(),
+              onPanUpdate: (details) {
+                if (details.delta.dx < -10 || details.delta.dx > 10) {
+                  _controller.toggleCard();
+                }
+              },
+              child: CardView(
+                card: card,
+                borderColor: Color(
+                    int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
+                isFront: true,
+                deckName: widget.deckName,
+              ),
+            ),
+            back: GestureDetector(
+              onTap: () => _controller.toggleCard(),
+              onPanUpdate: (details) {
+                if (details.delta.dx < -10 || details.delta.dx > 10) {
+                  _controller.toggleCard();
+                }
+              },
+              child: CardView(
+                card: card,
+                borderColor: Color(
+                    int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
+                isFront: false,
+                deckName: widget.deckName,
+              ),
             ),
           ),
         ),
@@ -153,7 +173,7 @@ class CardView extends StatelessWidget {
                     textAlign: TextAlign.left, // Align text to the left
                     style: const TextStyle(
                       fontSize: 20,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -165,7 +185,7 @@ class CardView extends StatelessWidget {
                     textAlign: TextAlign.left, // Align text to the left
                     style: const TextStyle(
                       fontSize: 20,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -190,7 +210,7 @@ class CardView extends StatelessWidget {
                         card.cardDescription,
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                     ),
