@@ -22,8 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _emailController.text = 'usereido@gmail.com';
-    _passwordController.text = 'usereido';
+    // _emailController.text = 'usereido@gmail.com';
+    // _passwordController.text = 'usereido';
 
     _emailFocusNode.addListener(() {
       setState(() {
@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             child: const Text(
-                              "Sign In",
+                              "Sign Up",
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,
