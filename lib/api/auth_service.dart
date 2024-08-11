@@ -28,7 +28,20 @@ class AuthService {
       );
 
       if (response.statusCode == 201) {
-        return {'status': 'success', 'message': 'User registered successfully'};
+        final data = jsonDecode(response.body);
+        final token =
+            data['token']; // Assuming the token is returned in the response
+        final id = data['user']['id']; // Assuming the user ID is returned
+
+        // Store the token and user ID
+        await _storage.write(key: 'auth_token', value: token);
+        await _storage.write(key: 'userID', value: id.toString());
+
+        return {
+          'status': 'success',
+          'message': 'User registered successfully',
+          'token': token
+        };
       } else {
         final error = jsonDecode(response.body)['message'];
         return {'status': 'error', 'message': error};

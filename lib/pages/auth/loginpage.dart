@@ -16,14 +16,15 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
+
   bool _isEmailFocused = false;
   bool _isPasswordFocused = false;
+  bool _isPasswordVisible = false;
+  bool _isEmailValid = true;
 
   @override
   void initState() {
     super.initState();
-    // _emailController.text = 'usereido@gmail.com';
-    // _passwordController.text = 'usereido';
 
     _emailFocusNode.addListener(() {
       setState(() {
@@ -48,6 +49,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
+    if (!_isEmailValid) {
+      // If email is invalid, do not proceed with login
+      return;
+    }
+
     bool success = await _authService.login(
       _emailController.text,
       _passwordController.text,
@@ -72,6 +78,15 @@ class _LoginPageState extends State<LoginPage> {
       context,
       MaterialPageRoute(builder: (context) => const RegisterPage()),
     );
+  }
+
+  // Email validation logic
+  void _validateEmail(String value) {
+    const String validDomain = "@paragoniu.edu.kh"; // Specify your domain here
+    setState(() {
+      _isEmailValid = RegExp(r"^[a-zA-Z0-9._%+-]+@paragoniu.edu.kh$")
+          .hasMatch(value); // Adjust as needed for your domain
+    });
   }
 
   @override
@@ -132,80 +147,103 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: _emailController,
-                    focusNode: _emailFocusNode,
-                    decoration: InputDecoration(
-                      hintText: "Email",
-                      hintStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.6)),
-                      filled: true,
-                      fillColor: _isEmailFocused
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.1),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: _isEmailFocused
-                                ? Colors.amber
-                                : Colors.transparent),
+                      controller: _emailController,
+                      focusNode: _emailFocusNode,
+                      onChanged: _validateEmail,
+                      decoration: InputDecoration(
+                        hintText: "Email",
+                        hintStyle:
+                            TextStyle(color: Colors.white.withOpacity(0.6)),
+                        filled: true,
+                        fillColor: _isEmailFocused
+                            ? Colors.white.withOpacity(0.2)
+                            : Colors.white.withOpacity(0.1),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: _isEmailValid
+                                  ? (_isEmailFocused
+                                      ? Colors.amber
+                                      : Colors.transparent)
+                                  : Colors.red),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: _isEmailValid
+                                  ? (_isEmailFocused
+                                      ? Colors.amber
+                                      : Colors.transparent)
+                                  : Colors.red),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: _isEmailValid
+                                  ? (_isEmailFocused
+                                      ? Colors.amber
+                                      : Colors.transparent)
+                                  : Colors.red),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: _isEmailFocused
-                                ? Colors.amber
-                                : Colors.transparent),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: _isEmailFocused
-                                ? Colors.amber
-                                : Colors.transparent),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 10),
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.none)),
                   const SizedBox(height: 40),
                   TextFormField(
-                    controller: _passwordController,
-                    focusNode: _passwordFocusNode,
-                    decoration: InputDecoration(
-                      hintText: "Password",
-                      hintStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.6)),
-                      filled: true,
-                      fillColor: _isPasswordFocused
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.1),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: _isPasswordFocused
-                                ? Colors.amber
-                                : Colors.transparent),
+                      controller: _passwordController,
+                      focusNode: _passwordFocusNode,
+                      obscureText: !_isPasswordVisible,
+                      decoration: InputDecoration(
+                        hintText: "Password",
+                        hintStyle:
+                            TextStyle(color: Colors.white.withOpacity(0.6)),
+                        filled: true,
+                        fillColor: _isPasswordFocused
+                            ? Colors.white.withOpacity(0.2)
+                            : Colors.white.withOpacity(0.1),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: _isPasswordFocused
+                                  ? Colors.amber
+                                  : Colors.transparent),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: _isPasswordFocused
+                                  ? Colors.amber
+                                  : Colors.transparent),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: _isPasswordFocused
+                                  ? Colors.amber
+                                  : Colors.transparent),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.amber,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: _isPasswordFocused
-                                ? Colors.amber
-                                : Colors.transparent),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                            color: _isPasswordFocused
-                                ? Colors.amber
-                                : Colors.transparent),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 10),
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.none)),
                   const SizedBox(height: 20),
                   Row(
                     children: [
@@ -269,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             child: const Text(
-                              "Forget Password",
+                              "Forgot Password",
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,

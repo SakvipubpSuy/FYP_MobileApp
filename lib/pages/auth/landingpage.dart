@@ -72,7 +72,7 @@ class _LandingPageState extends State<LandingPage> {
                         context,
                         "Login",
                         Color(0xFFFFD700),
-                        Color(0xFFFFA500),
+                        Color.fromARGB(255, 236, 161, 23),
                         const LoginPage(),
                       ),
                       const SizedBox(height: 15),

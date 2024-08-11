@@ -210,11 +210,11 @@ class _DeckPageState extends State<DeckPage> {
                                                     BorderRadius.circular(15.0),
                                                 gradient: LinearGradient(
                                                   colors: [
-                                                    Colors.blue[900]!,
-                                                    Colors.blue[600]!
+                                                    Color(0xFF1A1A4D),
+                                                    Color(0xFF2F2F85)
                                                   ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
+                                                  begin: Alignment.bottomCenter,
+                                                  end: Alignment.topCenter,
                                                 ),
                                               ),
                                               child: Padding(
@@ -275,7 +275,7 @@ class _DeckPageState extends State<DeckPage> {
                                                       '${deck.scannedCardCount} / ${deck.totalCardCount} cards',
                                                       style: TextStyle(
                                                         fontSize: 14,
-                                                        color: Colors.white70,
+                                                        color: Colors.amber,
                                                       ),
                                                     ),
                                                   ],

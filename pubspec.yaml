@@ -81,6 +81,8 @@ flutter:
     - assets/Profilepage.json
     - assets/Landingpage.json
     - assets/Deckappbar.json
+    - assets/Correctanswer.json
+    - assets/Wronganswer.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

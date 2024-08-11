@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   UserModel? _user;
   int? _totalCards;
   final String _defaultProfilePictureUrl =
-      'https://as1.ftcdn.net/jpg/03/91/19/22/220_F_391192211_2w5pQpFV1aozYQhcIw3FqA35vuTxJKrB.jpg';
+      'https://wallpapers.com/images/high/our-beloved-summer-date-l41r3jemvm5o7uum.webp';
 
   @override
   void initState() {
