@@ -47,7 +47,6 @@ class AuthService {
         return {'status': 'error', 'message': error};
       }
     } catch (error) {
-      print('Exception caught in AuthService: $error');
       return {'status': 'error', 'message': 'Failed to register user: $error'};
     }
   }

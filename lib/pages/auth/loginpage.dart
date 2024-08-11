@@ -21,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordFocused = false;
   bool _isPasswordVisible = false;
   bool _isEmailValid = true;
+  String? _emailError;
+  String? _passwordError;
 
   @override
   void initState() {
@@ -50,8 +52,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() async {
     if (!_isEmailValid) {
-      // If email is invalid, do not proceed with login
+      setState(() {
+        _emailError = "Invalid email format. Please use your university email.";
+      });
       return;
+    } else {
+      setState(() {
+        _emailError = null;
+      });
     }
 
     bool success = await _authService.login(
@@ -61,15 +69,16 @@ class _LoginPageState extends State<LoginPage> {
 
     if (success) {
       if (!mounted) return;
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const Dashboard()),
+        (Route<dynamic> route) => false,
       );
     } else {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to login')),
-      );
+      setState(() {
+        _passwordError = "Incorrect email or password.";
+      });
     }
   }
 
@@ -147,103 +156,117 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                      controller: _emailController,
-                      focusNode: _emailFocusNode,
-                      onChanged: _validateEmail,
-                      decoration: InputDecoration(
-                        hintText: "Email",
-                        hintStyle:
-                            TextStyle(color: Colors.white.withOpacity(0.6)),
-                        filled: true,
-                        fillColor: _isEmailFocused
-                            ? Colors.white.withOpacity(0.2)
-                            : Colors.white.withOpacity(0.1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: _isEmailValid
-                                  ? (_isEmailFocused
-                                      ? Colors.amber
-                                      : Colors.transparent)
-                                  : Colors.red),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: _isEmailValid
-                                  ? (_isEmailFocused
-                                      ? Colors.amber
-                                      : Colors.transparent)
-                                  : Colors.red),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: _isEmailValid
-                                  ? (_isEmailFocused
-                                      ? Colors.amber
-                                      : Colors.transparent)
-                                  : Colors.red),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 10),
+                    controller: _emailController,
+                    focusNode: _emailFocusNode,
+                    onChanged: _validateEmail,
+                    decoration: InputDecoration(
+                      hintText: "Email",
+                      hintStyle:
+                          TextStyle(color: Colors.white.withOpacity(0.6)),
+                      filled: true,
+                      fillColor: _isEmailFocused
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.white.withOpacity(0.1),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                            color: _isEmailValid
+                                ? (_isEmailFocused
+                                    ? Colors.amber
+                                    : Colors.transparent)
+                                : Colors.red),
                       ),
-                      style: const TextStyle(
-                          color: Colors.white,
-                          decoration: TextDecoration.none)),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                            color: _isEmailValid
+                                ? (_isEmailFocused
+                                    ? Colors.amber
+                                    : Colors.transparent)
+                                : Colors.red),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                            color: _isEmailValid
+                                ? (_isEmailFocused
+                                    ? Colors.amber
+                                    : Colors.transparent)
+                                : Colors.red),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 10),
+                    ),
+                    style: const TextStyle(
+                        color: Colors.white, decoration: TextDecoration.none),
+                  ),
+                  if (_emailError != null) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      _emailError!,
+                      style: TextStyle(color: Colors.red, fontSize: 14),
+                    ),
+                  ],
                   const SizedBox(height: 40),
                   TextFormField(
-                      controller: _passwordController,
-                      focusNode: _passwordFocusNode,
-                      obscureText: !_isPasswordVisible,
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        hintStyle:
-                            TextStyle(color: Colors.white.withOpacity(0.6)),
-                        filled: true,
-                        fillColor: _isPasswordFocused
-                            ? Colors.white.withOpacity(0.2)
-                            : Colors.white.withOpacity(0.1),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: _isPasswordFocused
-                                  ? Colors.amber
-                                  : Colors.transparent),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: _isPasswordFocused
-                                  ? Colors.amber
-                                  : Colors.transparent),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                              color: _isPasswordFocused
-                                  ? Colors.amber
-                                  : Colors.transparent),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 10),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Colors.amber,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
+                    controller: _passwordController,
+                    focusNode: _passwordFocusNode,
+                    obscureText: !_isPasswordVisible,
+                    decoration: InputDecoration(
+                      hintText: "Password",
+                      hintStyle:
+                          TextStyle(color: Colors.white.withOpacity(0.6)),
+                      filled: true,
+                      fillColor: _isPasswordFocused
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.white.withOpacity(0.1),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                            color: _isPasswordFocused
+                                ? Colors.amber
+                                : Colors.transparent),
                       ),
-                      style: const TextStyle(
-                          color: Colors.white,
-                          decoration: TextDecoration.none)),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                            color: _isPasswordFocused
+                                ? Colors.amber
+                                : Colors.transparent),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                            color: _isPasswordFocused
+                                ? Colors.amber
+                                : Colors.transparent),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 10),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.amber,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                    style: const TextStyle(
+                        color: Colors.white, decoration: TextDecoration.none),
+                  ),
+                  if (_passwordError != null) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      _passwordError!,
+                      style: TextStyle(color: Colors.red, fontSize: 14),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   Row(
                     children: [
