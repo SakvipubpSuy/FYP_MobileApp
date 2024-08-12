@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     if (!_isEmailValid) {
       setState(() {
-        _emailError = "Invalid email format. Please use your university email.";
+        _emailError = "Invalid email format.";
       });
       return;
     } else {
@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                           ? Colors.white.withOpacity(0.2)
                           : Colors.white.withOpacity(0.1),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _isEmailValid
                                 ? (_isEmailFocused
@@ -177,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                                 : Colors.red),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _isEmailValid
                                 ? (_isEmailFocused
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                                 : Colors.red),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         borderSide: BorderSide(
                             color: _isEmailValid
                                 ? (_isEmailFocused
@@ -221,21 +221,21 @@ class _LoginPageState extends State<LoginPage> {
                           ? Colors.white.withOpacity(0.2)
                           : Colors.white.withOpacity(0.1),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _isPasswordFocused
                                 ? Colors.amber
                                 : Colors.transparent),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _isPasswordFocused
                                 ? Colors.amber
                                 : Colors.transparent),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         borderSide: BorderSide(
                             color: _isPasswordFocused
                                 ? Colors.amber
@@ -307,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: const Text(
                               "Sign Up",
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -332,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: const Text(
                               "Forgot Password",
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),

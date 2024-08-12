@@ -116,69 +116,16 @@ class _RegisterPageState extends State<RegisterPage> {
             (Route<dynamic> route) => false,
           );
         } else {
-          _showErrorDialog(response['message']);
+          setState(() {
+            _usernameError = response['message'];
+          });
         }
       }).catchError((error) {
-        _showErrorDialog('An error occurred: $error');
+        setState(() {
+          _usernameError = 'An error occurred: $error';
+        });
       });
     }
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF1A1A4D),
-                  Color(0xFF2F2F85),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  'Error',
-                  style: TextStyle(
-                    color: Colors.red[700],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  message,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextButton(
-                  child: const Text(
-                    'Close',
-                    style: TextStyle(color: Colors.amber),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _navigateToRegisterPage() {
@@ -256,7 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ? Colors.white.withOpacity(0.2)
                           : Colors.white.withOpacity(0.1),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _usernameError != null
                                 ? Colors.red
@@ -265,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _usernameError != null
                                 ? Colors.red
@@ -274,7 +221,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         borderSide: BorderSide(
                             color: _usernameError != null
                                 ? Colors.red
@@ -284,15 +231,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 10),
-                      errorText: _usernameError,
-                      errorStyle: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                     style: const TextStyle(color: Colors.white),
                   ),
+                  if (_usernameError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _usernameError!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 40),
                   TextFormField(
                     controller: _emailController,
@@ -306,7 +259,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ? Colors.white.withOpacity(0.2)
                           : Colors.white.withOpacity(0.1),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _emailError != null
                                 ? Colors.red
@@ -315,7 +268,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _emailError != null
                                 ? Colors.red
@@ -324,7 +277,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         borderSide: BorderSide(
                             color: _emailError != null
                                 ? Colors.red
@@ -334,15 +287,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 10),
-                      errorText: _emailError,
-                      errorStyle: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                     style: const TextStyle(color: Colors.white),
                   ),
+                  if (_emailError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _emailError!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 40),
                   TextFormField(
                     controller: _passwordController,
@@ -357,7 +316,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ? Colors.white.withOpacity(0.2)
                           : Colors.white.withOpacity(0.1),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _passwordError != null
                                 ? Colors.red
@@ -366,7 +325,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _passwordError != null
                                 ? Colors.red
@@ -375,7 +334,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         borderSide: BorderSide(
                             color: _passwordError != null
                                 ? Colors.red
@@ -385,17 +344,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 10),
-                      errorText: _passwordError,
-                      errorStyle: TextStyle(
-                        color: Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isPasswordVisible
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: Colors.white.withOpacity(0.6),
                         ),
                         onPressed: () {
@@ -421,7 +374,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ? Colors.white.withOpacity(0.2)
                           : Colors.white.withOpacity(0.1),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _passwordError != null
                                 ? Colors.red
@@ -430,7 +383,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(5.0),
                         borderSide: BorderSide(
                             color: _passwordError != null
                                 ? Colors.red
@@ -439,7 +392,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     : Colors.transparent)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(15.0),
                         borderSide: BorderSide(
                             color: _passwordError != null
                                 ? Colors.red
@@ -452,20 +405,35 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     style: const TextStyle(color: Colors.white),
                   ),
-                  const SizedBox(height: 50),
-                  SizedBox(
-                    width: double.infinity,
+                  if (_passwordError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _passwordError!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 40),
+                  Center(
                     child: ElevatedButton(
-                      onPressed: _register,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.yellow[700],
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 40),
                       ),
+                      onPressed: _register,
                       child: const Text(
                         "Register",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
+                          color: Color(0xFF2F2F85),
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -478,14 +446,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: RichText(
                         text: TextSpan(
                           text: "Already have an account? ",
-                          style:
-                              TextStyle(color: Colors.white.withOpacity(0.8)),
+                          style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 16),
                           children: const [
                             TextSpan(
                               text: "Login",
                               style: TextStyle(
                                 color: Colors.yellow,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
                           ],
@@ -493,7 +463,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 60),
                 ],
               ),
             ),
