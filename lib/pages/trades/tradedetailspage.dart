@@ -389,7 +389,10 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
   Widget _buildTradeList(List<TradeModel> trades, bool isIncoming,
       bool isPendingApproval, bool isCompleted) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator(
+        color: Colors.amber,
+      ));
     }
     if (trades.isEmpty) {
       return Center(
@@ -473,7 +476,10 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
           ),
         ),
         child: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: CircularProgressIndicator(
+                color: Colors.amber,
+              ))
             : TabBarView(
                 controller: _tabController,
                 children: [

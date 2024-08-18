@@ -41,12 +41,16 @@ class _IndividualCardPageState extends State<IndividualCardPage> {
           style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFF2F2F85),
+        backgroundColor: const Color(0xFF2F2F85),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+            colors: [
+              Colors.black.withOpacity(0.8),
+              Color(int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
+              const Color(0xFF2F2F85),
+            ],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
           ),
@@ -97,6 +101,7 @@ class CardView extends StatelessWidget {
   final Color borderColor;
   final bool isFront;
   final String deckName;
+
   const CardView({
     super.key,
     required this.card,
@@ -112,7 +117,19 @@ class CardView extends StatelessWidget {
       height: 400,
       child: CustomPaint(
         painter: BorderPainter(borderColor: borderColor),
-        child: Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.black.withOpacity(0.5),
+                Color(int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
+                Colors.black.withOpacity(0.5),
+              ], // Gradient from dark to light
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+            borderRadius: BorderRadius.circular(10.0), // Rounded corners
+          ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -134,34 +151,70 @@ class CardView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.bolt, // Use an appropriate icon for energy
-                      color: Colors.blueAccent,
+                      color: borderColor,
                       size: 24,
                     ),
                     Text(
                       '${card.cardTier.cardEnergyRequired}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
-                        color: Colors.blueAccent,
+                        color: borderColor,
                       ),
                       textAlign: TextAlign.left, // Align text to the left
                     ),
                   ],
                 ),
-                Placeholder(
-                  fallbackHeight: 150,
-                  fallbackWidth: 150,
-                  color: borderColor,
+                Container(
+                  padding: const EdgeInsets.all(
+                      5.0), // Padding to create space between image and border
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        borderColor,
+                        Colors.white,
+                      ], // Gradient from tier color to white
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                        10.0), // Rounded corners for the border
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      5.0, // Match this with the container border radius
+                    ),
+                    child: card.imgUrl != null
+                        ? Image.network(
+                            card.imgUrl!, // Display the image from the URL
+                            height: 150, // Adjust the height as needed
+                            width:
+                                double.infinity, // Adjust the width as needed
+                            fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context,
+                                Object exception, StackTrace? stackTrace) {
+                              return const Icon(
+                                Icons.image_not_supported,
+                                size: 150,
+                                color: Colors.grey,
+                              );
+                            }, // Ensures the image covers the area
+                          )
+                        : const Icon(
+                            Icons.image, // Default icon if image is null
+                            size: 150,
+                            color: Colors.grey, // Color for the default icon
+                          ),
+                  ),
                 ),
-                const SizedBox(height: 10),
                 const SizedBox(height: 10),
                 Text(
                   card.cardName,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: borderColor,
+                    color: Colors.grey[300],
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -171,9 +224,10 @@ class CardView extends StatelessWidget {
                   child: Text(
                     'Card Tier: ${card.cardTier.cardTierName}',
                     textAlign: TextAlign.left, // Align text to the left
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[300],
                     ),
                   ),
                 ),
@@ -183,21 +237,22 @@ class CardView extends StatelessWidget {
                   child: Text(
                     'EXP: ${card.cardTier.cardXP}',
                     textAlign: TextAlign.left, // Align text to the left
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[300],
                     ),
                   ),
                 ),
               ] else ...[
                 Container(
                   alignment: Alignment.topLeft,
-                  child: Text(
+                  child: const Text(
                     'Card Details',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: borderColor,
+                      color: Colors.amber,
                     ),
                   ),
                 ),
@@ -208,9 +263,9 @@ class CardView extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: Text(
                         card.cardDescription,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: Colors.grey[300],
                         ),
                       ),
                     ),
@@ -233,7 +288,14 @@ class BorderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = borderColor
+      ..shader = LinearGradient(
+        colors: [
+          borderColor,
+          Colors.white
+        ], // Gradient from tier color to white
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..strokeWidth = 5
       ..style = PaintingStyle.stroke;
 

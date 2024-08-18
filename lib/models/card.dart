@@ -8,6 +8,7 @@ class CardModel {
   final String cardName;
   final String cardDescription;
   final int cardVersion;
+  final String? imgUrl;
   final String? createdAt;
   final String? updatedAt;
   final CardTierModel cardTier;
@@ -20,6 +21,7 @@ class CardModel {
     required this.cardName,
     required this.cardDescription,
     required this.cardVersion,
+    this.imgUrl,
     this.createdAt,
     this.updatedAt,
     required this.cardTier,
@@ -34,6 +36,7 @@ class CardModel {
       cardName: json['card_name'],
       cardDescription: json['card_description'],
       cardVersion: json['card_version'],
+      imgUrl: json['img_url'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       cardTier: CardTierModel.fromJson(json['card_tier']),
@@ -49,6 +52,7 @@ class CardModel {
       'card_name': cardName,
       'card_description': cardDescription,
       'card_version': cardVersion,
+      'img_url': imgUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
       'card_tier': cardTier.toJson(),

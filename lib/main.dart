@@ -8,12 +8,28 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LandingPage(),
+      home: Scaffold(
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxWidth = constraints.maxWidth;
+            final targetWidth =
+                maxWidth < 600 ? maxWidth : 400; // Constrain width
+            final targetHeight = constraints.maxHeight;
+
+            return Center(
+              child: SizedBox(
+                width: targetWidth.toDouble(),
+                height: targetHeight,
+                child: const LandingPage(),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

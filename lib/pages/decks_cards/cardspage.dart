@@ -173,7 +173,7 @@ class _CardPageState extends State<CardPage> {
                       return GridView.builder(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
+                          crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
                           childAspectRatio: 2 / 3,
@@ -212,8 +212,10 @@ class CardWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
         side: BorderSide(
-          color: Color(int.parse(
-              card.cardTier.color.replaceFirst('#', '0xff'))), // Border color
+          // color: Color(int.parse(
+          //     card.cardTier.color.replaceFirst('#', '0xff'))), // Border color
+
+          color: Color(0xFF1A1A4D),
           width: 5.0, // Border width
         ),
       ),
@@ -226,24 +228,49 @@ class CardWidget extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
             gradient: LinearGradient(
-              colors: [Colors.white, Colors.grey[200]!], // Background gradient
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              colors: [
+                Colors.black.withOpacity(0.8),
+                Color(int.parse(card.cardTier.color.replaceFirst('#', '0xff'))),
+                const Color(0xFF2F2F85),
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
             ),
+            borderRadius: BorderRadius.circular(15.0),
           ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              card.imgUrl != null && card.imgUrl!.isNotEmpty
+                  ? Image.network(
+                      card.imgUrl!, // URL of the image
+                      height: 80, // Set the height of the image
+                      width: double.infinity, // Set the width of the image
+                      fit: BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace? stackTrace) {
+                        return const Icon(
+                          Icons.image_not_supported,
+                          size: 80,
+                          color: Colors.grey,
+                        );
+                      }, // How the image should be fitted inside the container
+                    )
+                  : const Icon(
+                      Icons.image_not_supported,
+                      size: 80, // Adjust the size as needed
+                      color: Colors.grey,
+                    ),
+              const SizedBox(height: 10),
               Text(
                 card.cardName,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.black,
+                  color: Color(0xFF1A1A4D),
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -252,9 +279,9 @@ class CardWidget extends StatelessWidget {
               Text(
                 card.cardDescription,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black,
+                  color: Color(0xFF1A1A4D),
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,

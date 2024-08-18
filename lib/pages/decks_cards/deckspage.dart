@@ -42,8 +42,8 @@ class _DeckPageState extends State<DeckPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
             colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
@@ -54,7 +54,7 @@ class _DeckPageState extends State<DeckPage> {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                color: Color(0xFF2F2F85),
+                color: const Color(0xFF2F2F85),
                 child: Row(
                   children: [
                     Expanded(
@@ -157,12 +157,12 @@ class _DeckPageState extends State<DeckPage> {
                             Expanded(
                               child: PageView.builder(
                                 controller: _pageController,
-                                itemCount: (decks.length / 9)
+                                itemCount: (decks.length / 4)
                                     .ceil(), // Number of pages
                                 itemBuilder: (context, pageIndex) {
-                                  int startIndex = pageIndex * 9;
+                                  int startIndex = pageIndex * 4;
                                   int endIndex =
-                                      (startIndex + 9).clamp(0, decks.length);
+                                      (startIndex + 4).clamp(0, decks.length);
                                   List<DeckModel> pageDecks =
                                       decks.sublist(startIndex, endIndex);
 
@@ -171,7 +171,7 @@ class _DeckPageState extends State<DeckPage> {
                                     child: GridView.builder(
                                       gridDelegate:
                                           const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
+                                        crossAxisCount: 2,
                                         crossAxisSpacing: 10,
                                         mainAxisSpacing: 10,
                                         childAspectRatio: 2 / 3,
@@ -189,7 +189,7 @@ class _DeckPageState extends State<DeckPage> {
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
-                                            side: BorderSide(
+                                            side: const BorderSide(
                                               color: Color(
                                                   0xFF2F2F85), // Border color
                                               width: 5.0, // Border width
@@ -208,7 +208,7 @@ class _DeckPageState extends State<DeckPage> {
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(15.0),
-                                                gradient: LinearGradient(
+                                                gradient: const LinearGradient(
                                                   colors: [
                                                     Color(0xFF1A1A4D),
                                                     Color(0xFF2F2F85)
@@ -224,11 +224,46 @@ class _DeckPageState extends State<DeckPage> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: [
+                                                    // Check if the imgUrl is null or empty
+                                                    deck.imgUrl != null &&
+                                                            deck.imgUrl!
+                                                                .isNotEmpty
+                                                        ? Image.network(
+                                                            deck.imgUrl!,
+                                                            fit: BoxFit.cover,
+                                                            height:
+                                                                80, // Adjust the height as needed
+                                                            width:
+                                                                double.infinity,
+                                                            errorBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Object
+                                                                        exception,
+                                                                    StackTrace?
+                                                                        stackTrace) {
+                                                              return const Icon(
+                                                                Icons
+                                                                    .image_not_supported,
+                                                                size: 80,
+                                                                color:
+                                                                    Colors.grey,
+                                                              );
+                                                            },
+                                                          )
+                                                        : const Icon(
+                                                            Icons
+                                                                .image_not_supported,
+                                                            size:
+                                                                80, // Adjust the size as needed
+                                                            color: Colors.grey,
+                                                          ),
+                                                    const SizedBox(height: 10),
                                                     Text(
                                                       deck.deckName,
                                                       textAlign:
                                                           TextAlign.center,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 18,
@@ -237,23 +272,25 @@ class _DeckPageState extends State<DeckPage> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       maxLines:
-                                                          1, // Limit to 2 lines
+                                                          1, // Limit to 1 line
                                                     ),
                                                     const SizedBox(height: 10),
                                                     Text(
                                                       deck.deckDescription,
                                                       textAlign:
                                                           TextAlign.start,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 14,
-                                                        color: const Color
-                                                            .fromRGBO(255, 255,
-                                                            255, 0.702),
+                                                        color: Color.fromRGBO(
+                                                            255,
+                                                            255,
+                                                            255,
+                                                            0.702),
                                                       ),
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       maxLines:
-                                                          2, // Limit to 3 lines
+                                                          1, // Limit to 2 lines
                                                     ),
                                                     Padding(
                                                       padding: const EdgeInsets
@@ -265,7 +302,7 @@ class _DeckPageState extends State<DeckPage> {
                                                         backgroundColor:
                                                             Colors.white24,
                                                         valueColor:
-                                                            AlwaysStoppedAnimation<
+                                                            const AlwaysStoppedAnimation<
                                                                     Color>(
                                                                 Colors
                                                                     .greenAccent),
@@ -273,7 +310,7 @@ class _DeckPageState extends State<DeckPage> {
                                                     ),
                                                     Text(
                                                       '${deck.scannedCardCount} / ${deck.totalCardCount} cards',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 14,
                                                         color: Colors.amber,
                                                       ),
@@ -294,7 +331,7 @@ class _DeckPageState extends State<DeckPage> {
                               padding: const EdgeInsets.all(8.0),
                               child: SmoothPageIndicator(
                                 controller: _pageController,
-                                count: (decks.length / 9).ceil(),
+                                count: (decks.length / 4).ceil(),
                                 effect: WormEffect(
                                   dotColor: Colors.white24,
                                   activeDotColor: Colors.yellow[700]!,

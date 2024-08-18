@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/pages/dashboard.dart';
 import '../../api/auth_service.dart';
 import 'registerpage.dart';
+import 'resetpassword.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -89,6 +90,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void _navigateToResetPasswordPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ResetPasswordPage()),
+    );
+  }
+
   // Email validation logic
   void _validateEmail(String value) {
     const String validDomain = "@paragoniu.edu.kh"; // Specify your domain here
@@ -159,6 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _emailController,
                     focusNode: _emailFocusNode,
                     onChanged: _validateEmail,
+                    onFieldSubmitted: (value) => _login(),
                     decoration: InputDecoration(
                       hintText: "Email",
                       hintStyle:
@@ -212,6 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _passwordController,
                     focusNode: _passwordFocusNode,
                     obscureText: !_isPasswordVisible,
+                    onFieldSubmitted: (value) => _login(),
                     decoration: InputDecoration(
                       hintText: "Password",
                       hintStyle:
@@ -248,7 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                           _isPasswordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: Colors.amber,
+                          color: Colors.amber.withOpacity(0.8),
                         ),
                         onPressed: () {
                           setState(() {
@@ -317,7 +327,7 @@ class _LoginPageState extends State<LoginPage> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            //forgot password functionality here
+                            _navigateToResetPasswordPage();
                           },
                           child: Container(
                             padding: const EdgeInsets.only(bottom: 4.0),

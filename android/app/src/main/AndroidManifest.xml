@@ -11,6 +11,8 @@
         android:fullBackupContent="false">
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:resizeableActivity="false"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

@@ -349,7 +349,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           _isPasswordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.amber.withOpacity(0.8),
                         ),
                         onPressed: () {
                           setState(() {
@@ -402,6 +402,19 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 10),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.amber.withOpacity(0.8),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
                     style: const TextStyle(color: Colors.white),
                   ),

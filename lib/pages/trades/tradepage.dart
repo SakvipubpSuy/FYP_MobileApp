@@ -166,7 +166,22 @@ class _TradePageState extends State<TradePage> {
                 Text('Select Card from $selectedDeck'),
                 ..._tradableCards[selectedDeck]!.map<Widget>((card) {
                   return RadioListTile<int>(
-                    title: Text(card.cardName),
+                    title: Row(
+                      children: [
+                        if (card.imgUrl != null)
+                          Image.network(
+                            card.imgUrl!,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          )
+                        else
+                          const Icon(Icons.image_not_supported,
+                              size: 40, color: Colors.grey),
+                        const SizedBox(width: 10),
+                        Text(card.cardName),
+                      ],
+                    ),
                     value: card.cardId,
                     groupValue: selectedCardId,
                     onChanged: (value) {
@@ -277,109 +292,102 @@ class _TradePageState extends State<TradePage> {
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                controller: _searchController,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: 'Search Players',
-                  labelStyle: TextStyle(color: Colors.amber),
-                  prefixIcon: const Icon(Icons.search, color: Colors.amber),
-                  hintText: 'Search Players',
-                  hintStyle: TextStyle(color: Colors.white),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.amber),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                      borderSide: BorderSide(color: Colors.amber)),
+      body: _isLoading
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
                 ),
               ),
-              const SizedBox(height: 16),
-              if (_isSearching)
-                const Center(
-                  child: CircularProgressIndicator(),
-                )
-              else if (_searchResults.isEmpty)
-                Center(
-                  child: _searchController.text.isEmpty
-                      ? const Text(
-                          'Enter player name to start searching',
-                          style: TextStyle(color: Colors.amber),
-                        )
-                      : const Text(
-                          'No players found',
-                          style: TextStyle(color: Colors.amber),
-                        ),
-                )
-              else
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _searchResults.length,
-                    itemBuilder: (context, index) {
-                      final user = _searchResults[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.amber,
-                          child: Text(
-                            '${user['name'][0]}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1A1A4D),
-                            ),
-                          ),
-                        ),
-                        title: Text(user['name'],
-                            style: const TextStyle(color: Colors.white)),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Trade Request'),
-                              content:
-                                  Text('Initiate trade with ${user['name']}'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    await _fetchTradableCard();
-                                    await _sendTradeRequest(
-                                      int.parse(userID!),
-                                      user['id'],
-                                    );
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Confirm'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+              child: const Center(
+                  child: CircularProgressIndicator(color: Colors.amber)),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
                 ),
-            ],
-          ),
-        ),
-      ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: 'Search Players',
+                        labelStyle: TextStyle(color: Colors.amber),
+                        prefixIcon:
+                            const Icon(Icons.search, color: Colors.amber),
+                        hintText: 'Search Players',
+                        hintStyle: TextStyle(color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                            borderSide: BorderSide(color: Colors.amber)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    if (_isSearching)
+                      const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.amber,
+                        ),
+                      )
+                    else if (_searchResults.isEmpty)
+                      Center(
+                        child: _searchController.text.isEmpty
+                            ? const Text(
+                                'Enter player name to start searching',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : const Text(
+                                'No players found',
+                                style: TextStyle(color: Colors.amber),
+                              ),
+                      )
+                    else
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _searchResults.length,
+                          itemBuilder: (context, index) {
+                            final user = _searchResults[index];
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.amber,
+                                child: Text(
+                                  '${user['name'][0]}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1A1A4D),
+                                  ),
+                                ),
+                              ),
+                              title: Text(user['name'],
+                                  style: const TextStyle(color: Colors.white)),
+                              onTap: () async {
+                                await _fetchTradableCard();
+                                await _sendTradeRequest(
+                                  int.parse(userID!),
+                                  user['id'],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

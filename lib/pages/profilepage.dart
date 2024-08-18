@@ -140,10 +140,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 30),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: CustomCard(
-                        buttonText: "Logout",
-                        onTap: _logout,
-                        color: Colors.blueAccent,
+                      child: Container(
+                        child: ElevatedButton(
+                          onPressed: _logout,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 10),
+                          ),
+                          child: const Text(
+                            'Logout',
+                            style: TextStyle(
+                                fontSize: 16, color: Color(0xFF1A1A4D)),
+                          ),
+                        ),
                       ),
                     ),
                   ],
