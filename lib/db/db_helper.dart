@@ -67,7 +67,6 @@ class DatabaseHelper {
   CREATE TABLE cards (
     card_id INTEGER PRIMARY KEY AUTOINCREMENT,
     deck_id INTEGER NOT NULL,
-    parent_card_id INTEGER,
     card_name TEXT NOT NULL,
     card_tier_id INTEGER,
     card_description TEXT NOT NULL,
@@ -76,8 +75,7 @@ class DatabaseHelper {
     created_at TEXT,
     updated_at TEXT,
     FOREIGN KEY (card_tier_id) REFERENCES card_tiers(card_tier_id) ON DELETE CASCADE,
-    FOREIGN KEY (deck_id) REFERENCES decks(deck_id) ON DELETE CASCADE,
-    FOREIGN KEY (parent_card_id) REFERENCES cards(card_id) ON DELETE CASCADE
+    FOREIGN KEY (deck_id) REFERENCES decks(deck_id) ON DELETE CASCADE
   )
   ''');
   }

@@ -16,13 +16,13 @@ class CardDbHelper {
     // Insert the cardTier if it doesn't already exist
     await db.insert(
       'card_tiers',
-      card.cardTier.toJson(),
+      card.cardTier.toMap(), // Use toMap() instead of toJson()
       conflictAlgorithm:
           ConflictAlgorithm.ignore, // Ignore if it already exists
     );
 
     // Insert the card, ensuring to exclude the 'card_tier' object itself
-    Map<String, dynamic> cardData = card.toJson();
+    Map<String, dynamic> cardData = card.toMap();
     cardData.remove('card_tier'); // Remove the nested card_tier map
 
     await db.insert(
@@ -47,7 +47,7 @@ class CardDbHelper {
 
     // Map the results to CardModel
     List<CardModel> cards = maps.map((map) {
-      return CardModel.fromJson({
+      return CardModel.fromMap({
         ...map,
         'card_tier': {
           'card_tier_id': map['card_tier_id'],

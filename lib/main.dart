@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'db/db_helper.dart';
 import 'pages/auth/landingpage.dart';
 
-void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // Recreate the database (usually during development or testing)
-  // DatabaseHelper dbHelper = DatabaseHelper();
-  // await dbHelper.recreateDatabase();
+  // Recreate the database for testing purposes
+  DatabaseHelper dbHelper = DatabaseHelper();
+  await dbHelper.recreateDatabase();
   runApp(const MyApp());
 }
 

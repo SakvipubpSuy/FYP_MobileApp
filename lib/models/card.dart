@@ -64,7 +64,7 @@ class CardModel {
   Map<String, dynamic> toMap() {
     return {
       'card_id': cardId,
-      'parent_card_id': parentCardId,
+      // 'parent_card_id': parentCardId,
       'deck_id': deckId,
       'card_tier_id': cardTierId, // Store only the cardTierId as an integer
       'card_name': cardName,
@@ -80,7 +80,7 @@ class CardModel {
   factory CardModel.fromMap(Map<String, dynamic> map) {
     return CardModel(
       cardId: map['card_id'],
-      parentCardId: map['parent_card_id'],
+      // parentCardId: map['parent_card_id'],
       deckId: map['deck_id'],
       cardTierId: map['card_tier_id'],
       cardName: map['card_name'],
