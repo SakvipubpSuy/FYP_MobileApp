@@ -40,4 +40,30 @@ class CardTierModel {
       'updated_at': updatedAt,
     };
   }
+
+  // Implementing toMap
+  Map<String, dynamic> toMap() {
+    return {
+      'card_tier_id': cardTierId,
+      'card_tier_name': cardTierName,
+      'card_XP': cardXP,
+      'card_energy_required': cardEnergyRequired,
+      'color': color,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+  }
+
+  // Implementing fromMap
+  factory CardTierModel.fromMap(Map<String, dynamic> map) {
+    return CardTierModel(
+      cardTierId: map['card_tier_id'],
+      cardTierName: map['card_tier_name'],
+      cardXP: map['card_XP'],
+      cardEnergyRequired: map['card_energy_required'],
+      color: map['color'],
+      createdAt: map['created_at'],
+      updatedAt: map['updated_at'],
+    );
+  }
 }

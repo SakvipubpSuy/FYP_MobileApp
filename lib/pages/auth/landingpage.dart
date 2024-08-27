@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fyp_mobileapp/pages/dashboard.dart';
 import 'dart:async';
 import 'package:lottie/lottie.dart';
@@ -17,17 +18,26 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   late Future<bool> _initialized;
   final _storage = const FlutterSecureStorage();
+  bool _isConnected = true;
 
   @override
   void initState() {
     super.initState();
     _initialized = _initializeApp();
+    _checkConnection();
   }
 
   Future<bool> _initializeApp() async {
     await Future.delayed(const Duration(milliseconds: 2000));
     String? token = await _storage.read(key: 'auth_token');
     return token != null;
+  }
+
+  Future<void> _checkConnection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    setState(() {
+      _isConnected = connectivityResult != ConnectivityResult.none;
+    });
   }
 
   @override
@@ -43,50 +53,81 @@ class _LandingPageState extends State<LandingPage> {
           return const Dashboard();
         } else {
           return Scaffold(
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Welcome to UniSaga",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+            body: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Welcome to UniSaga",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          LottieBuilder.asset('assets/Landingpage.json'),
+                          const SizedBox(height: 20),
+                          _buildButton(
+                            context,
+                            "Login",
+                            Color(0xFFFFD700),
+                            Color.fromARGB(255, 236, 161, 23),
+                            const LoginPage(),
+                          ),
+                          const SizedBox(height: 15),
+                          _buildButton(
+                            context,
+                            "Register",
+                            Color.fromARGB(255, 134, 124, 17),
+                            Color(0xFFFFD700),
+                            const RegisterPage(),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      LottieBuilder.asset('assets/Landingpage.json'),
-                      const SizedBox(height: 20),
-                      _buildButton(
-                        context,
-                        "Login",
-                        Color(0xFFFFD700),
-                        Color.fromARGB(255, 236, 161, 23),
-                        const LoginPage(),
-                      ),
-                      const SizedBox(height: 15),
-                      _buildButton(
-                        context,
-                        "Register",
-                        Color.fromARGB(255, 134, 124, 17),
-                        Color(0xFFFFD700),
-                        const RegisterPage(),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                if (!_isConnected)
+                  Positioned(
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.wifi_off, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text(
+                            "No internet connection",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
             ),
           );
         }
@@ -137,7 +178,7 @@ class _LandingPageState extends State<LandingPage> {
 }
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +188,7 @@ class SplashScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(
-              'assets/SplashScreen.json', // Replace with your Lottie animation file
+              'assets/SplashScreen.json',
             ),
           ],
         ),

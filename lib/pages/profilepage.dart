@@ -21,8 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   UserModel? _user;
   int? _totalCards;
-  final String _defaultProfilePictureUrl =
-      'https://wallpapers.com/images/high/our-beloved-summer-date-l41r3jemvm5o7uum.webp';
+  final String _defaultProfilePicture = 'assets/icons/default_profile_icon.png';
 
   @override
   void initState() {
@@ -90,23 +89,28 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     const SizedBox(height: 50),
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        _user != null && _user!.profilePhotoPath != null
-                            ? _user!.profilePhotoPath!
-                            : _defaultProfilePictureUrl,
-                      ),
                       radius: 80,
+                      backgroundColor:
+                          Colors.white, // Optional: Add a background color
+                      child: _user != null &&
+                              _user!.profilePhotoPath != null &&
+                              _user!.profilePhotoPath!.isNotEmpty
+                          ? null // If the user has a profile photo, the image will be set as the backgroundImage
+                          : Icon(
+                              Icons.person,
+                              size: 80,
+                              color: Colors.grey[
+                                  800], // Optional: Customize the icon color
+                            ),
+                      backgroundImage: _user != null &&
+                              _user!.profilePhotoPath != null &&
+                              _user!.profilePhotoPath!.isNotEmpty
+                          ? NetworkImage(_user!.profilePhotoPath!)
+                          : null, // If no profile photo, display the icon instead
                     ),
                     const SizedBox(height: 20),
                     Text(
                       _user!.name,
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Text(
-                      _user!.email,
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

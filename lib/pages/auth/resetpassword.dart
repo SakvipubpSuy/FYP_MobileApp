@@ -55,7 +55,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     setState(() {
       if (status!.toLowerCase().contains('success')) {
         _isCodeVerified = true;
-        _statusMessage = 'Code verified. You can now reset your password.';
+        _statusMessage = 'Code verified successfully. You can now reset your password.';
       } else {
         _statusMessage = 'Invalid or expired code. Please try again.';
         _isCodeVerified = false;

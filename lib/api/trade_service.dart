@@ -10,7 +10,7 @@ import 'api_url.dart';
 class TradeService {
   String baseUrl = ApiURL.baseUrl;
 
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   Future<void> sendTradeRequest(BuildContext context, int initiatorId,
       int receiverId, int selectedCardId) async {
@@ -18,7 +18,7 @@ class TradeService {
 
     if (token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Authorization token not found')),
+        const SnackBar(content: Text('Authorization token not found')),
       );
       return;
     }

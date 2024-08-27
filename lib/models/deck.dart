@@ -48,4 +48,32 @@ class DeckModel {
       'updated_at': updatedAt,
     };
   }
+
+  // Convert DeckModel to Map for SQLite storage
+  Map<String, dynamic> toMap() {
+    return {
+      'deck_id': deckId,
+      'deck_name': deckName,
+      'deck_description': deckDescription,
+      'total_cards_count': totalCardCount,
+      'scanned_cards_count': scannedCardCount,
+      'img_url': imgUrl,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+  }
+
+  // Create DeckModel from Map (SQLite storage)
+  factory DeckModel.fromMap(Map<String, dynamic> map) {
+    return DeckModel(
+      deckId: map['deck_id'],
+      deckName: map['deck_name'],
+      deckDescription: map['deck_description'],
+      totalCardCount: map['total_cards_count'],
+      scannedCardCount: map['scanned_cards_count'],
+      imgUrl: map['img_url'],
+      createdAt: map['created_at'],
+      updatedAt: map['updated_at'],
+    );
+  }
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../api/card_service.dart';
+import '../utils/connectivity_service.dart';
+import 'no_connection_page.dart';
 
 class QRScan extends StatefulWidget {
   const QRScan({super.key});
@@ -14,6 +16,20 @@ class _QRScanState extends State<QRScan> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   bool isScanning = false;
+  bool isConnected = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+  }
+
+  void _checkConnectivity() async {
+    bool connectionStatus = await ConnectivityService().checkConnection();
+    setState(() {
+      isConnected = connectionStatus;
+    });
+  }
 
   @override
   void reassemble() {
@@ -27,68 +43,79 @@ class _QRScanState extends State<QRScan> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: const Text("Scan QRCODE",
-            style: TextStyle(
-              color: Colors.amber,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            )),
-        backgroundColor: Color(0xFF2F2F85),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: isScanning ? _buildQrView(context) : Container(),
-            ),
-            Expanded(
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isScanning = true;
-                      });
-                    },
-                    child: const Text(
-                      'Start Scanning',
-                      style: TextStyle(color: Colors.amber),
-                    ),
-                  ),
+    return isConnected
+        ? Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              automaticallyImplyLeading: false,
+              title: const Text(
+                "Scan QRCODE",
+                style: TextStyle(
+                  color: Colors.amber,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+              backgroundColor: const Color(0xFF2F2F85),
             ),
-          ],
-        ),
-      ),
-    );
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: isScanning ? _buildQrView(context) : Container(),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          onPressed: () {
+                            if (isConnected) {
+                              setState(() {
+                                isScanning = true;
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('No Internet Connection')),
+                              );
+                            }
+                          },
+                          child: const Text(
+                            'Start Scanning',
+                            style: TextStyle(color: Colors.amber),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : NoConnectionPage(); // Show the NoConnectionPage if not connected
   }
 
   Widget _buildQrView(BuildContext context) {

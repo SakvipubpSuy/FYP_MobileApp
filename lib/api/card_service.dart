@@ -4,7 +4,9 @@ import 'package:fyp_mobileapp/models/card.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../db/card_helper.dart';
 import '../models/quest.dart';
+import '../utils/connectivity_service.dart';
 import 'api_url.dart';
 
 class CardService {
@@ -14,27 +16,42 @@ class CardService {
 
   // Method to get cards for a specific deck
   Future<List<CardModel>> getCardsByDeck(int deckId) async {
-    String? token = await _storage.read(key: 'auth_token');
-    // Debug: Print the token
-    // print('Token: $token');
+    ConnectivityService connectivityService = ConnectivityService();
+    bool isConnected = await connectivityService.checkConnection();
 
-    if (token == null) {
-      throw Exception('No auth token found');
-    }
+    if (isConnected) {
+      // Fetch from API
+      String? token = await _storage.read(key: 'auth_token');
 
-    final response = await http.get(
-      Uri.parse('$baseUrl/decks/$deckId/cards'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+      if (token == null) {
+        throw Exception('No auth token found');
+      }
 
-    if (response.statusCode == 200) {
-      final List jsonResponse = jsonDecode(response.body);
-      return jsonResponse.map((card) => CardModel.fromJson(card)).toList();
+      final response = await http.get(
+        Uri.parse('$baseUrl/decks/$deckId/cards'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List jsonResponse = jsonDecode(response.body);
+        final cards =
+            jsonResponse.map((card) => CardModel.fromJson(card)).toList();
+
+        // Save cards and card tiers locally
+        for (CardModel card in cards) {
+          await CardDbHelper().saveCard(card);
+        }
+
+        return cards;
+      } else {
+        throw Exception('Failed to fetch cards');
+      }
     } else {
-      throw Exception('Failed to fetch cards');
+      // Fetch from local database
+      return await CardDbHelper().getCardsByDeck(deckId);
     }
   }
 
@@ -82,20 +99,30 @@ class CardService {
   }
 
   Future<int> countUserTotalCards() async {
-    String? token = await _storage.read(key: 'auth_token');
-    final response = await http.get(
-      Uri.parse('$baseUrl/user/total-cards'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    ConnectivityService connectivityService = ConnectivityService();
+    bool isConnected = await connectivityService.checkConnection();
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['total_cards'];
+    if (isConnected) {
+      // Fetch the total card count from the API if there's an internet connection
+      String? token = await _storage.read(key: 'auth_token');
+      final response = await http.get(
+        Uri.parse('$baseUrl/user/total-cards'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['total_cards'];
+      } else {
+        throw Exception('Failed to load total cards count from server');
+      }
     } else {
-      throw Exception('Failed to load scanned cards count');
+      // If no internet connection, fetch the count from the local database
+      int localCardCount = await CardDbHelper().getLocalCardCount();
+      return localCardCount;
     }
   }
 

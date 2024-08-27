@@ -55,7 +55,42 @@ class CardModel {
       'img_url': imgUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
-      'card_tier': cardTier.toJson(),
+      'card_tier':
+          cardTier.toJson(), // Store full cardTier as a nested object in JSON
     };
+  }
+
+  // Converts the CardModel to a Map for SQLite storage
+  Map<String, dynamic> toMap() {
+    return {
+      'card_id': cardId,
+      'parent_card_id': parentCardId,
+      'deck_id': deckId,
+      'card_tier_id': cardTierId, // Store only the cardTierId as an integer
+      'card_name': cardName,
+      'card_description': cardDescription,
+      'card_version': cardVersion,
+      'img_url': imgUrl,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+  }
+
+  // Create a method to instantiate a CardModel from a Map (useful for reading from SQLite)
+  factory CardModel.fromMap(Map<String, dynamic> map) {
+    return CardModel(
+      cardId: map['card_id'],
+      parentCardId: map['parent_card_id'],
+      deckId: map['deck_id'],
+      cardTierId: map['card_tier_id'],
+      cardName: map['card_name'],
+      cardDescription: map['card_description'],
+      cardVersion: map['card_version'],
+      imgUrl: map['img_url'],
+      createdAt: map['created_at'],
+      updatedAt: map['updated_at'],
+      cardTier: CardTierModel.fromMap(
+          map), // map['card_tier'] if nested; here assuming map holds all details
+    );
   }
 }

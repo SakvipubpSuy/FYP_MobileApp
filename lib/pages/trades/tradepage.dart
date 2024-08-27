@@ -5,6 +5,8 @@ import '../../api/trade_service.dart';
 import '../../api/deck_service.dart';
 import '../../api/user_service.dart';
 import '../../models/card.dart';
+import '../../utils/connectivity_service.dart';
+import '../no_connection_page.dart';
 import 'tradedetailspage.dart';
 
 class TradePage extends StatefulWidget {
@@ -26,6 +28,7 @@ class _TradePageState extends State<TradePage> {
   int _incomingTradeCount = 0;
   bool _isLoading = true;
   Map<String, List<CardModel>> _tradableCards = {};
+  bool _hasConnection = true;
 
   @override
   void initState() {
@@ -34,6 +37,34 @@ class _TradePageState extends State<TradePage> {
     _getUserID();
     _countTrades();
     _fetchTradableCard();
+    _checkConnectivity();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityService = ConnectivityService();
+    _hasConnection = await connectivityService.checkConnection();
+
+    if (!_hasConnection) {
+      if (mounted) {
+        setState(() {}); // Trigger UI update to show no connection page
+      }
+    }
+
+    // Listen to connectivity changes
+    connectivityService.onConnectivityChanged.listen((isConnected) {
+      if (!isConnected && mounted) {
+        setState(() {
+          _hasConnection = false;
+        });
+      } else if (isConnected && mounted) {
+        setState(() {
+          _hasConnection = true;
+        });
+        // Optionally refresh data when the connection is restored
+        _countTrades();
+        _fetchTradableCard();
+      }
+    });
   }
 
   Future<void> _getUserID() async {
@@ -174,12 +205,24 @@ class _TradePageState extends State<TradePage> {
                             width: 40,
                             height: 40,
                             fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context,
+                                Object exception, StackTrace? stackTrace) {
+                              return const Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                                color: Colors.grey,
+                              );
+                            },
                           )
                         else
                           const Icon(Icons.image_not_supported,
                               size: 40, color: Colors.grey),
                         const SizedBox(width: 10),
-                        Text(card.cardName),
+                        Text(
+                          card.cardName,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ],
                     ),
                     value: card.cardId,
@@ -235,160 +278,163 @@ class _TradePageState extends State<TradePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Color(0xFF2F2F85),
-        title: Text(
-          'Trade Page',
-          style: TextStyle(
-            color: Colors.yellow[700],
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          Stack(
-            children: [
-              Transform.scale(
-                scale: 1.5, // Adjust this value to make the button bigger
-                child: IconButton(
-                  icon: Icon(
-                    Icons.notifications_none,
-                    size: 24,
-                    color: Colors.yellow[700],
-                  ),
-                  onPressed: _navigateToTradeDetailsPage,
+    return _hasConnection
+        ? Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Color(0xFF2F2F85),
+              title: Text(
+                'Trade Page',
+                style: TextStyle(
+                  color: Colors.yellow[700],
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              if (_incomingTradeCount > 0)
-                Positioned(
-                  right: 10,
-                  top: 10,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$_incomingTradeCount',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-              child: const Center(
-                  child: CircularProgressIndicator(color: Colors.amber)),
-            )
-          : Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
+              actions: [
+                Stack(
                   children: [
-                    TextField(
-                      controller: _searchController,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Search Players',
-                        labelStyle: TextStyle(color: Colors.amber),
-                        prefixIcon:
-                            const Icon(Icons.search, color: Colors.amber),
-                        hintText: 'Search Players',
-                        hintStyle: TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.amber),
-                          borderRadius: BorderRadius.circular(8.0),
+                    Transform.scale(
+                      scale: 1.5, // Adjust this value to make the button bigger
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.notifications_none,
+                          size: 24,
+                          color: Colors.yellow[700],
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                            borderSide: BorderSide(color: Colors.amber)),
+                        onPressed: _navigateToTradeDetailsPage,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    if (_isSearching)
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.amber,
-                        ),
-                      )
-                    else if (_searchResults.isEmpty)
-                      Center(
-                        child: _searchController.text.isEmpty
-                            ? const Text(
-                                'Enter player name to start searching',
-                                style: TextStyle(color: Colors.white),
-                              )
-                            : const Text(
-                                'No players found',
-                                style: TextStyle(color: Colors.amber),
+                    if (_incomingTradeCount > 0)
+                      Positioned(
+                        right: 10,
+                        top: 10,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 20,
+                            minHeight: 20,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '$_incomingTradeCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
                               ),
-                      )
-                    else
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: _searchResults.length,
-                          itemBuilder: (context, index) {
-                            final user = _searchResults[index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.amber,
-                                child: Text(
-                                  '${user['name'][0]}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1A1A4D),
-                                  ),
-                                ),
-                              ),
-                              title: Text(user['name'],
-                                  style: const TextStyle(color: Colors.white)),
-                              onTap: () async {
-                                await _fetchTradableCard();
-                                await _sendTradeRequest(
-                                  int.parse(userID!),
-                                  user['id'],
-                                );
-                              },
-                            );
-                          },
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ),
                   ],
                 ),
-              ),
+              ],
             ),
-    );
+            body: _isLoading
+                ? Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                    child: const Center(
+                        child: CircularProgressIndicator(color: Colors.amber)),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _searchController,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              labelText: 'Search Players',
+                              labelStyle: TextStyle(color: Colors.amber),
+                              prefixIcon:
+                                  const Icon(Icons.search, color: Colors.amber),
+                              hintText: 'Search Players',
+                              hintStyle: TextStyle(color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.amber),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderSide: BorderSide(color: Colors.amber)),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          if (_isSearching)
+                            const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.amber,
+                              ),
+                            )
+                          else if (_searchResults.isEmpty)
+                            Center(
+                              child: _searchController.text.isEmpty
+                                  ? const Text(
+                                      'Enter player name to start searching',
+                                      style: TextStyle(color: Colors.white),
+                                    )
+                                  : const Text(
+                                      'No players found',
+                                      style: TextStyle(color: Colors.amber),
+                                    ),
+                            )
+                          else
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: _searchResults.length,
+                                itemBuilder: (context, index) {
+                                  final user = _searchResults[index];
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.amber,
+                                      child: Text(
+                                        '${user['name'][0]}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1A1A4D),
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(user['name'],
+                                        style: const TextStyle(
+                                            color: Colors.white)),
+                                    onTap: () async {
+                                      await _fetchTradableCard();
+                                      await _sendTradeRequest(
+                                        int.parse(userID!),
+                                        user['id'],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+          )
+        : NoConnectionPage();
   }
 }
 

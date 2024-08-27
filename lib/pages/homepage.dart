@@ -5,8 +5,10 @@ import 'package:lottie/lottie.dart';
 import '../api/card_service.dart';
 import '../api/trade_service.dart'; // Add this import for trade counts
 import '../api/user_service.dart';
+import '../utils/connectivity_service.dart';
 import '../utils/route.dart';
 import '../widgets/statistic_card_component.dart';
+import 'no_connection_page.dart';
 import 'qrscanpage.dart';
 import 'quests/questdetailpage.dart';
 
@@ -31,16 +33,43 @@ class _HomePageState extends State<HomePage> {
 
   int? _totalCards;
   UserModel? _user;
+  bool _hasConnection = true;
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
     _fetchTotalCards();
+    _checkConnectivity();
     _futureQuest = _questService.getQuests();
     _incomingTradeCount = _tradeService.countTrades('incoming');
     _outgoingTradeCount = _tradeService.countTrades('outgoing');
     _pendingApprovalTradeCount = _tradeService.countTrades('pending_approval');
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityService = ConnectivityService();
+    _hasConnection = await connectivityService.checkConnection();
+
+    if (!_hasConnection) {
+      if (mounted) {
+        setState(() {}); // Trigger UI update to show no connection page
+      }
+    }
+
+    // Listen to connectivity changes
+    connectivityService.onConnectivityChanged.listen((isConnected) {
+      if (!isConnected && mounted) {
+        setState(() {
+          _hasConnection = false;
+        });
+      } else if (isConnected && mounted) {
+        setState(() {
+          _hasConnection = true;
+        });
+        // Optionally refresh data when the connection is restored
+      }
+    });
   }
 
   void _fetchUserData() {
@@ -290,6 +319,10 @@ class _HomePageState extends State<HomePage> {
                                   child: FutureBuilder<List<QuestionModel>>(
                                     future: _futureQuest,
                                     builder: (context, questSnapshot) {
+                                      if (!_hasConnection) {
+                                        // Show NoConnectionPage if no connection
+                                        return NoConnectionPage();
+                                      }
                                       if (questSnapshot.connectionState ==
                                           ConnectionState.waiting) {
                                         return Center(

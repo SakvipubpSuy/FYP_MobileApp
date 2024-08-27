@@ -157,12 +157,12 @@ class _DeckPageState extends State<DeckPage> {
                             Expanded(
                               child: PageView.builder(
                                 controller: _pageController,
-                                itemCount: (decks.length / 4)
+                                itemCount: (decks.length / 9)
                                     .ceil(), // Number of pages
                                 itemBuilder: (context, pageIndex) {
-                                  int startIndex = pageIndex * 4;
+                                  int startIndex = pageIndex * 9;
                                   int endIndex =
-                                      (startIndex + 4).clamp(0, decks.length);
+                                      (startIndex + 9).clamp(0, decks.length);
                                   List<DeckModel> pageDecks =
                                       decks.sublist(startIndex, endIndex);
 
@@ -171,7 +171,7 @@ class _DeckPageState extends State<DeckPage> {
                                     child: GridView.builder(
                                       gridDelegate:
                                           const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
+                                        crossAxisCount: 3,
                                         crossAxisSpacing: 10,
                                         mainAxisSpacing: 10,
                                         childAspectRatio: 2 / 3,
@@ -232,7 +232,7 @@ class _DeckPageState extends State<DeckPage> {
                                                             deck.imgUrl!,
                                                             fit: BoxFit.cover,
                                                             height:
-                                                                80, // Adjust the height as needed
+                                                                50, // Adjust the height as needed
                                                             width:
                                                                 double.infinity,
                                                             errorBuilder:
@@ -245,7 +245,7 @@ class _DeckPageState extends State<DeckPage> {
                                                               return const Icon(
                                                                 Icons
                                                                     .image_not_supported,
-                                                                size: 80,
+                                                                size: 50,
                                                                 color:
                                                                     Colors.grey,
                                                               );
@@ -255,7 +255,7 @@ class _DeckPageState extends State<DeckPage> {
                                                             Icons
                                                                 .image_not_supported,
                                                             size:
-                                                                80, // Adjust the size as needed
+                                                                50, // Adjust the size as needed
                                                             color: Colors.grey,
                                                           ),
                                                     const SizedBox(height: 10),
@@ -266,7 +266,7 @@ class _DeckPageState extends State<DeckPage> {
                                                       style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: 18,
+                                                        fontSize: 16,
                                                         color: Colors.white,
                                                       ),
                                                       overflow:
@@ -274,7 +274,7 @@ class _DeckPageState extends State<DeckPage> {
                                                       maxLines:
                                                           1, // Limit to 1 line
                                                     ),
-                                                    const SizedBox(height: 10),
+                                                    const SizedBox(height: 8),
                                                     Text(
                                                       deck.deckDescription,
                                                       textAlign:
@@ -295,7 +295,7 @@ class _DeckPageState extends State<DeckPage> {
                                                     Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
-                                                          vertical: 10.0),
+                                                          vertical: 8.0),
                                                       child:
                                                           LinearProgressIndicator(
                                                         value: progress,
@@ -331,7 +331,7 @@ class _DeckPageState extends State<DeckPage> {
                               padding: const EdgeInsets.all(8.0),
                               child: SmoothPageIndicator(
                                 controller: _pageController,
-                                count: (decks.length / 4).ceil(),
+                                count: (decks.length / 9).ceil(),
                                 effect: WormEffect(
                                   dotColor: Colors.white24,
                                   activeDotColor: Colors.yellow[700]!,
