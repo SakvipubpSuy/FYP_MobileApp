@@ -7,6 +7,7 @@ class DeckModel {
   final String? imgUrl;
   final String createdAt;
   final String updatedAt;
+  final String? title;
 
   DeckModel({
     required this.deckId,
@@ -17,6 +18,7 @@ class DeckModel {
     this.imgUrl,
     required this.createdAt,
     required this.updatedAt,
+    this.title,
   });
   @override
   String toString() {
@@ -33,6 +35,7 @@ class DeckModel {
       imgUrl: json['img_url'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
+      title: json['title'],
     );
   }
 
@@ -46,6 +49,7 @@ class DeckModel {
       'img_url': imgUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'title': title,
     };
   }
 
@@ -60,6 +64,7 @@ class DeckModel {
       'img_url': imgUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'title': title,
     };
   }
 
@@ -74,6 +79,7 @@ class DeckModel {
       imgUrl: map['img_url'],
       createdAt: map['created_at'],
       updatedAt: map['updated_at'],
+      title: map['title'],
     );
   }
 }

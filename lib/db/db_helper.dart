@@ -47,7 +47,8 @@ class DatabaseHelper {
     scanned_cards_count INTEGER NOT NULL,
     img_url TEXT,
     created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
+    updated_at TEXT NOT NULL,
+    title TEXT
   )
   ''');
 

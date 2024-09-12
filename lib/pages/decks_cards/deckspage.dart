@@ -309,7 +309,7 @@ class _DeckPageState extends State<DeckPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      '${deck.scannedCardCount} / ${deck.totalCardCount} cards',
+                                                      ' ${deck.title} ',
                                                       style: const TextStyle(
                                                         fontSize: 14,
                                                         color: Colors.amber,

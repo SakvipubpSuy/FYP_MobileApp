@@ -4,6 +4,7 @@ class CardTierModel {
   final int cardXP;
   final int cardEnergyRequired;
   final String color;
+
   final String? createdAt;
   final String? updatedAt;
 

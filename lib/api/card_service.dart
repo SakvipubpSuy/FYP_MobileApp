@@ -12,7 +12,7 @@ import 'api_url.dart';
 class CardService {
   String baseUrl = ApiURL.baseUrl;
 
-  final FlutterSecureStorage _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   // Method to get cards for a specific deck
   Future<List<CardModel>> getCardsByDeck(int deckId) async {
@@ -82,7 +82,7 @@ class CardService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({'card_id': int.parse(cardId)}),
+      body: jsonEncode({'card_id': cardId}),
     );
 
     var responseMessage = jsonDecode(response.body);

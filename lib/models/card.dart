@@ -9,6 +9,7 @@ class CardModel {
   final String cardDescription;
   final int cardVersion;
   final String? imgUrl;
+  final String? qrCodePath;
   final String? createdAt;
   final String? updatedAt;
   final CardTierModel cardTier;
@@ -22,6 +23,7 @@ class CardModel {
     required this.cardDescription,
     required this.cardVersion,
     this.imgUrl,
+    this.qrCodePath,
     this.createdAt,
     this.updatedAt,
     required this.cardTier,
@@ -37,6 +39,7 @@ class CardModel {
       cardDescription: json['card_description'],
       cardVersion: json['card_version'],
       imgUrl: json['img_url'],
+      qrCodePath: json['qr_code_path'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
       cardTier: CardTierModel.fromJson(json['card_tier']),
@@ -53,6 +56,7 @@ class CardModel {
       'card_description': cardDescription,
       'card_version': cardVersion,
       'img_url': imgUrl,
+      'qr_code_path': qrCodePath,
       'created_at': createdAt,
       'updated_at': updatedAt,
       'card_tier':
