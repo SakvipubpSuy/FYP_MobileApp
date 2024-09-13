@@ -65,14 +65,14 @@ class _CardPageState extends State<CardPage> {
           style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFF2F2F85),
+        backgroundColor: const Color(0xFF2F2F85),
       ),
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              color: Color(0xFF2F2F85),
+              color: const Color(0xFF2F2F85),
               child: Row(
                 children: [
                   Expanded(
@@ -211,7 +211,7 @@ class CardWidget extends StatelessWidget {
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
-        side: BorderSide(
+        side: const BorderSide(
           // color: Color(int.parse(
           //     card.cardTier.color.replaceFirst('#', '0xff'))), // Border color
 
@@ -267,7 +267,7 @@ class CardWidget extends StatelessWidget {
               Text(
                 card.cardName,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   color: Color(0xFF1A1A4D),
@@ -279,9 +279,20 @@ class CardWidget extends StatelessWidget {
               Text(
                 card.cardDescription,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF1A1A4D),
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Version: ${card.cardVersion}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.amber,
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,

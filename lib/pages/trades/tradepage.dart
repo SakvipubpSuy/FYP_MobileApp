@@ -87,18 +87,52 @@ class _TradePageState extends State<TradePage> {
     }
   }
 
+  // Future<void> _fetchTradableCard() async {
+  //   try {
+  //     if (userID != null) {
+  //       final decks = await _deckService.getDecks();
+  //       final deckMap = <String, List<CardModel>>{};
+
+  //       for (var deck in decks) {
+  //         final deckName = deck.deckName;
+  //         final cards = await _cardService.getCardsByDeck(deck.deckId);
+
+  //         if (cards.isNotEmpty) {
+  //           deckMap[deckName] = cards;
+  //         }
+  //       }
+
+  //       setState(() {
+  //         _tradableCards = deckMap;
+  //       });
+  //     }
+  //   } catch (error) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Failed to fetch decks: $error')),
+  //       );
+  //     }
+  //   }
+  // }
+
   Future<void> _fetchTradableCard() async {
     try {
       if (userID != null) {
         final decks = await _deckService.getDecks();
         final deckMap = <String, List<CardModel>>{};
 
+        // Fetch cards for each deck
         for (var deck in decks) {
           final deckName = deck.deckName;
           final cards = await _cardService.getCardsByDeck(deck.deckId);
 
-          if (cards.isNotEmpty) {
-            deckMap[deckName] = cards;
+          // Filter only the cards that have a parent_card_id, as they are tradable
+          final tradableCards =
+              cards.where((card) => card.parentCardId != null).toList();
+
+          // Only add decks that have tradable cards
+          if (tradableCards.isNotEmpty) {
+            deckMap[deckName] = tradableCards;
           }
         }
 
@@ -440,53 +474,36 @@ class _TradePageState extends State<TradePage> {
 
 
 
-//FETCH CARD WITH VERSION CHECK
-  // Future<void> _fetchTradableCard() async {
-  //   try {
-  //     if (userID != null) {
-  //       final decks = await _deckService.getDecks();
-  //       final deckMap = <String, List<CardModel>>{};
+// FETCH CARD WITH VERSION CHECK
+// Future<void> _fetchTradableCard() async {
+//   try {
+//     if (userID != null) {
+//       final decks = await _deckService.getDecks();
+//       final deckMap = <String, List<CardModel>>{};
 
-  //       // Fetch cards for each deck
-  //       for (var deck in decks) {
-  //         final deckName = deck.deckName;
-  //         final cards = await _cardService.getCardsByDeck(deck.deckId);
-  //         final latestVersions = <String, int>{};
+//       // Fetch cards for each deck
+//       for (var deck in decks) {
+//         final deckName = deck.deckName;
+//         final cards = await _cardService.getCardsByDeck(deck.deckId);
 
-  //         //   // Find the latest version for each card in the deck
-  //         for (var card in cards) {
-  //           final cardName = card.cardName;
-  //           final cardVersion = card.cardVersion;
-  //           if (latestVersions.containsKey(cardName)) {
-  //             if (latestVersions[cardName]! < cardVersion) {
-  //               latestVersions[cardName] = cardVersion;
-  //             }
-  //           } else {
-  //             latestVersions[cardName] = cardVersion;
-  //           }
-  //         }
+//         // Filter only the cards that have a parent_card_id, as they are tradable
+//         final tradableCards = cards.where((card) => card.parentCardId != null).toList();
 
-  //         //   // // Filter out the latest versions
-  //         final filteredCards = cards.where((card) {
-  //           final cardName = card.cardName;
-  //           final cardVersion = card.cardVersion;
-  //           return cardVersion < latestVersions[cardName]!;
-  //         }).toList();
+//         // Only add decks that have tradable cards
+//         if (tradableCards.isNotEmpty) {
+//           deckMap[deckName] = tradableCards;
+//         }
+//       }
 
-  //         // Only add decks that have tradable cards
-  //         if (filteredCards.isNotEmpty) {
-  //           deckMap[deckName] = filteredCards;
-  //         }
-  //       }
-  //       setState(() {
-  //         _tradableCards = deckMap;
-  //       });
-  //     }
-  //   } catch (error) {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Failed to fetch decks: $error')),
-  //       );
-  //     }
-  //   }
-  // }
+//       setState(() {
+//         _tradableCards = deckMap;
+//       });
+//     }
+//   } catch (error) {
+//     if (mounted) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text('Failed to fetch decks: $error')),
+//       );
+//     }
+//   }
+// }

@@ -244,6 +244,19 @@ class CardView extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Version: ${card.cardVersion}',
+                    textAlign: TextAlign.left, // Align text to the left
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                ),
               ] else ...[
                 Container(
                   alignment: Alignment.topLeft,

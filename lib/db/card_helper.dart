@@ -12,7 +12,8 @@ class CardDbHelper {
   Future<void> saveCard(CardModel card) async {
     // Get the database instance
     final db = await DatabaseHelper().database;
-
+    // Print before saving
+    print('Saving card: ${card.toMap()}');
     // Insert the cardTier if it doesn't already exist
     await db.insert(
       'card_tiers',
@@ -21,8 +22,10 @@ class CardDbHelper {
           ConflictAlgorithm.ignore, // Ignore if it already exists
     );
 
-    // Insert the card, ensuring to exclude the 'card_tier' object itself
+    // Insert the card, ensuring to include the 'card_tier_id'
     Map<String, dynamic> cardData = card.toMap();
+    cardData['card_tier_id'] = card.cardTier.cardTierId; // Ensure this is set
+
     cardData.remove('card_tier'); // Remove the nested card_tier map
 
     await db.insert(
@@ -60,7 +63,7 @@ class CardDbHelper {
         }
       });
     }).toList();
-
+    print(cards);
     return cards;
   }
 

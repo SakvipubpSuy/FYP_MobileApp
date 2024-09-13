@@ -14,6 +14,25 @@ class CardService {
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  //Decrypt the ID
+  Future<String> decrypt(String encryptedData) async {
+    String? token = await _storage.read(key: 'auth_token');
+    final response = await http.get(
+      Uri.parse('$baseUrl/decrypt/$encryptedData'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return responseData;
+    } else {
+      throw Exception('Failed to decrypt scan data');
+    }
+  }
+
   // Method to get cards for a specific deck
   Future<List<CardModel>> getCardsByDeck(int deckId) async {
     ConnectivityService connectivityService = ConnectivityService();
@@ -66,9 +85,11 @@ class CardService {
     );
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      return responseData['count'];
+
+      // Assuming you have a CardModel class that can handle the parsed data
+      return CardModel.fromJson(responseData);
     } else {
-      throw Exception('Failed to fetch trade counts');
+      throw Exception('Failed to fetch card details');
     }
   }
 
@@ -87,15 +108,31 @@ class CardService {
 
     var responseMessage = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(responseMessage['message'])),
-      );
+      _showResultDialog(context, 'Success', responseMessage['message']);
     } else {
       String errorMessage = responseMessage['message'] ?? 'Failed to scan card';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to scan card: $errorMessage')),
-      );
+      _showResultDialog(context, 'Error', 'Failed to scan card: $errorMessage');
     }
+  }
+
+  void _showResultDialog(BuildContext context, String title, String message) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<int> countUserTotalCards() async {

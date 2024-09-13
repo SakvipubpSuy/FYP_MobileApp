@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     _pendingApprovalTradeCount = _tradeService.countTrades('pending_approval');
   }
 
-  Future<void> _checkConnectivity() async {
+  void _checkConnectivity() async {
     final connectivityService = ConnectivityService();
     _hasConnection = await connectivityService.checkConnection();
 
@@ -67,8 +67,15 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _hasConnection = true;
         });
-        // Optionally refresh data when the connection is restored
+        // Refresh the quests when the connection is restored
+        _fetchQuests();
       }
+    });
+  }
+
+  void _fetchQuests() {
+    setState(() {
+      _futureQuest = _questService.getQuests();
     });
   }
 
@@ -307,7 +314,7 @@ class _HomePageState extends State<HomePage> {
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: [
-                                Text(
+                                const Text(
                                   'Quest',
                                   style: TextStyle(
                                     fontSize: 24,
@@ -325,7 +332,7 @@ class _HomePageState extends State<HomePage> {
                                       }
                                       if (questSnapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return Center(
+                                        return const Center(
                                             child: CircularProgressIndicator());
                                       } else if (questSnapshot.hasError) {
                                         return Center(
@@ -343,9 +350,9 @@ class _HomePageState extends State<HomePage> {
                                               decoration: BoxDecoration(
                                                 gradient: LinearGradient(
                                                   colors: [
-                                                    Color.fromARGB(
+                                                    const Color.fromARGB(
                                                         255, 12, 58, 118)!,
-                                                    Color.fromARGB(
+                                                    const Color.fromARGB(
                                                         255, 11, 104, 210)
                                                   ],
                                                   begin: Alignment.topLeft,
@@ -381,7 +388,7 @@ class _HomePageState extends State<HomePage> {
                                           },
                                         );
                                       } else {
-                                        return Center(
+                                        return const Center(
                                             child: Text('No quests available'));
                                       }
                                     },
