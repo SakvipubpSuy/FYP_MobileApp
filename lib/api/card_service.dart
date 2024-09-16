@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/models/card.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db/card_helper.dart';
 import '../models/quest.dart';
@@ -177,10 +178,79 @@ class CardService {
       List<dynamic> body = jsonDecode(response.body);
       List<QuestionModel> quests =
           body.map((dynamic item) => QuestionModel.fromJson(item)).toList();
-      return quests;
+      return await _getDailyRandomQuests(quests);
     } else {
       throw Exception('Failed to fetch quests');
     }
+  }
+
+  Future<List<QuestionModel>> _getDailyRandomQuests(
+      List<QuestionModel> allQuests) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Current time
+    DateTime now = DateTime.now().toUtc();
+
+    // Calculate the next reset time (05:00 AM UTC+7)
+    DateTime nextReset = DateTime(now.year, now.month, now.day, 22, 0, 0)
+        .toUtc(); // 22:00 UTC is 05:00 AM UTC+7
+    if (now.isAfter(nextReset)) {
+      // Move to next day at 05:00 AM UTC+7
+      nextReset = nextReset.add(Duration(days: 1));
+    }
+
+    // Fetch last stored date and reset time
+    final savedDate = prefs.getString('savedQuestDate');
+    final lastResetTime = prefs.getString('lastResetTime');
+    DateTime? lastReset =
+        lastResetTime != null ? DateTime.parse(lastResetTime).toUtc() : null;
+
+    List<String>? savedQuests = prefs.getStringList('dailyRandomQuests');
+
+    // Fetch completed quests
+    List<String> completedQuests = prefs.getStringList('completedQuests') ?? [];
+
+    // Check if the quests were already set for today and if the current time is still within the valid range
+    if (savedDate != null &&
+        savedQuests != null &&
+        lastReset != null &&
+        now.isBefore(nextReset) &&
+        now.isAfter(lastReset)) {
+      // Filter out completed quests from the saved ones
+      return savedQuests
+          .map((q) => QuestionModel.fromJson(jsonDecode(q)))
+          .where((quest) =>
+              !completedQuests.contains(quest.question_id.toString()))
+          .toList();
+    }
+
+    // Filter out completed quests
+    List<QuestionModel> availableQuests = allQuests
+        .where(
+            (quest) => !completedQuests.contains(quest.question_id.toString()))
+        .toList();
+
+    // Randomly select 3 quests for the day
+    List<QuestionModel> randomQuests = [];
+    if (availableQuests.length > 3) {
+      availableQuests.shuffle(); // Randomize the quest list
+      randomQuests = availableQuests.take(3).toList();
+    } else {
+      // If user has less than 3 available quests, use all of them
+      randomQuests = availableQuests;
+    }
+
+    // Save the selected quests, today's date, and the reset time
+    prefs.setString('savedQuestDate',
+        DateTime.now().toString().split(' ')[0]); // Store just the date
+    prefs.setString('lastResetTime',
+        nextReset.toIso8601String()); // Store the next reset time
+    prefs.setStringList(
+      'dailyRandomQuests',
+      randomQuests.map((q) => jsonEncode(q.toJson())).toList(),
+    );
+
+    return randomQuests;
   }
 
   Future<Map<String, dynamic>> submitQuest(int questionId, int answerId) async {

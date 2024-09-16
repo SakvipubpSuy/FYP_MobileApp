@@ -315,7 +315,7 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               children: [
                                 const Text(
-                                  'Quest',
+                                  'Quests',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,

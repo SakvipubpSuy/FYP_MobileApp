@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/models/quest.dart';
 import 'package:fyp_mobileapp/pages/dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/card_service.dart';
 import 'package:lottie/lottie.dart';
 
@@ -31,6 +32,10 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         widget.quest.question_id,
         widget.quest.answers[_selectedAnswer!].answer_id,
       );
+
+      bool isCorrect = response['message'] == 'Correct answer!';
+      onQuestCompleted(widget.quest.question_id, isCorrect);
+
       setState(() {
         _submitMessage = response['message'];
       });
@@ -45,6 +50,19 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
         );
       }
     }
+  }
+
+  void onQuestCompleted(int questionId, bool isCorrect) {
+    _markQuestAsCompleted(questionId);
+  }
+
+  Future<void> _markQuestAsCompleted(int questionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> completedQuests = prefs.getStringList('completedQuests') ?? [];
+
+    // Add the completed question ID to the list
+    completedQuests.add(questionId.toString());
+    prefs.setStringList('completedQuests', completedQuests);
   }
 
   void _showResultModal(String message) {

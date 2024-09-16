@@ -314,6 +314,9 @@ class _DeckPageState extends State<DeckPage> {
                                                         fontSize: 14,
                                                         color: Colors.amber,
                                                       ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
                                                     ),
                                                   ],
                                                 ),
