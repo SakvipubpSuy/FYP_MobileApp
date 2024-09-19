@@ -116,6 +116,7 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
   //   }
   // }
 
+  //FETCH ONLY OLDER VERSION OF CARDS FOR TRADE
   Future<void> _fetchTradableCard() async {
     try {
       final decks = await _deckService.getDecks();
@@ -126,9 +127,13 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
         final deckName = deck.deckName;
         final cards = await _cardService.getCardsByDeck(deck.deckId);
 
-        // Add all cards to the deck, regardless of version
-        if (cards.isNotEmpty) {
-          deckMap[deckName] = cards;
+        // Filter only the cards that have a parent_card_id, as they are tradable
+        final tradableCards =
+            cards.where((card) => card.parentCardId != null).toList();
+
+        // Only add decks that have tradable cards
+        if (tradableCards.isNotEmpty) {
+          deckMap[deckName] = tradableCards;
         }
       }
 
@@ -446,7 +451,7 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF1A1A4D), Color(0xFF2F2F85)],
+              colors: [Color(0xFF2F2F85), Color(0xFF2F2F85)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),

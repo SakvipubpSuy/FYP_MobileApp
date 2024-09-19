@@ -60,9 +60,11 @@ class _QuestionDetailPageState extends State<QuestionDetailPage> {
     final prefs = await SharedPreferences.getInstance();
     List<String> completedQuests = prefs.getStringList('completedQuests') ?? [];
 
-    // Add the completed question ID to the list
-    completedQuests.add(questionId.toString());
-    prefs.setStringList('completedQuests', completedQuests);
+    // Add the completed question ID to the list if not already there
+    if (!completedQuests.contains(questionId.toString())) {
+      completedQuests.add(questionId.toString());
+      prefs.setStringList('completedQuests', completedQuests);
+    }
   }
 
   void _showResultModal(String message) {

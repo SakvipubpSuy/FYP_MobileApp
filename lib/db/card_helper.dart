@@ -13,7 +13,7 @@ class CardDbHelper {
     // Get the database instance
     final db = await DatabaseHelper().database;
     // Print before saving
-    print('Saving card: ${card.toMap()}');
+    // print('Saving card: ${card.toMap()}');
     // Insert the cardTier if it doesn't already exist
     await db.insert(
       'card_tiers',
@@ -63,7 +63,7 @@ class CardDbHelper {
         }
       });
     }).toList();
-    print(cards);
+    // print(cards);
     return cards;
   }
 

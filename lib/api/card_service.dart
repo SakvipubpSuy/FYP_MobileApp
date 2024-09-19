@@ -188,34 +188,26 @@ class CardService {
       List<QuestionModel> allQuests) async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Current time
-    DateTime now = DateTime.now().toUtc();
+    // Get today's date in 'yyyy-MM-dd' format
+    // Use this if you want to reset it every minute for testing purpose:
+    // DateTime.now().toIso8601String().substring(0, 16);
 
-    // Calculate the next reset time (05:00 AM UTC+7)
-    DateTime nextReset = DateTime(now.year, now.month, now.day, 22, 0, 0)
-        .toUtc(); // 22:00 UTC is 05:00 AM UTC+7
-    if (now.isAfter(nextReset)) {
-      // Move to next day at 05:00 AM UTC+7
-      nextReset = nextReset.add(Duration(days: 1));
+    String todayDate = DateTime.now().toIso8601String().split('T')[0];
+
+    // Fetch the last saved quest date
+    String? savedDate = prefs.getString('savedQuestDate');
+
+    // If it's a new day, reset the completed quests
+    if (savedDate != null && savedDate != todayDate) {
+      // Clear the completed quests for a new day
+      prefs.remove('completedQuests');
     }
-
-    // Fetch last stored date and reset time
-    final savedDate = prefs.getString('savedQuestDate');
-    final lastResetTime = prefs.getString('lastResetTime');
-    DateTime? lastReset =
-        lastResetTime != null ? DateTime.parse(lastResetTime).toUtc() : null;
-
-    List<String>? savedQuests = prefs.getStringList('dailyRandomQuests');
-
     // Fetch completed quests
     List<String> completedQuests = prefs.getStringList('completedQuests') ?? [];
 
-    // Check if the quests were already set for today and if the current time is still within the valid range
-    if (savedDate != null &&
-        savedQuests != null &&
-        lastReset != null &&
-        now.isBefore(nextReset) &&
-        now.isAfter(lastReset)) {
+    // Check if the quests were already set for today
+    List<String>? savedQuests = prefs.getStringList('dailyRandomQuests');
+    if (savedDate != null && savedQuests != null && savedDate == todayDate) {
       // Filter out completed quests from the saved ones
       return savedQuests
           .map((q) => QuestionModel.fromJson(jsonDecode(q)))
@@ -224,7 +216,7 @@ class CardService {
           .toList();
     }
 
-    // Filter out completed quests
+    // Filter out completed quests from available quests
     List<QuestionModel> availableQuests = allQuests
         .where(
             (quest) => !completedQuests.contains(quest.question_id.toString()))
@@ -236,15 +228,11 @@ class CardService {
       availableQuests.shuffle(); // Randomize the quest list
       randomQuests = availableQuests.take(3).toList();
     } else {
-      // If user has less than 3 available quests, use all of them
-      randomQuests = availableQuests;
+      randomQuests = availableQuests; // Use all available quests if less than 3
     }
 
-    // Save the selected quests, today's date, and the reset time
-    prefs.setString('savedQuestDate',
-        DateTime.now().toString().split(' ')[0]); // Store just the date
-    prefs.setString('lastResetTime',
-        nextReset.toIso8601String()); // Store the next reset time
+    // Save the selected quests and today's date
+    prefs.setString('savedQuestDate', todayDate);
     prefs.setStringList(
       'dailyRandomQuests',
       randomQuests.map((q) => jsonEncode(q.toJson())).toList(),
