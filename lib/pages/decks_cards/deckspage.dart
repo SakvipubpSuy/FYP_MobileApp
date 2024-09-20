@@ -179,11 +179,9 @@ class _DeckPageState extends State<DeckPage> {
                                       itemCount: pageDecks.length,
                                       itemBuilder: (context, index) {
                                         DeckModel deck = pageDecks[index];
-                                        double progress =
-                                            deck.totalCardCount > 0
-                                                ? deck.scannedCardCount /
-                                                    deck.totalCardCount
-                                                : 0.0;
+                                        double progress = deck.totalXP > 0
+                                            ? deck.userXP / deck.totalXP
+                                            : 0.0;
 
                                         return Card(
                                           shape: RoundedRectangleBorder(

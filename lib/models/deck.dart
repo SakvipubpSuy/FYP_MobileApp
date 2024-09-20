@@ -2,8 +2,8 @@ class DeckModel {
   final int deckId;
   final String deckName;
   final String deckDescription;
-  final int totalCardCount;
-  final int scannedCardCount;
+  final int totalXP;
+  final int userXP;
   final String? imgUrl;
   final String createdAt;
   final String updatedAt;
@@ -13,8 +13,8 @@ class DeckModel {
     required this.deckId,
     required this.deckName,
     required this.deckDescription,
-    required this.totalCardCount,
-    required this.scannedCardCount,
+    required this.totalXP,
+    required this.userXP,
     this.imgUrl,
     required this.createdAt,
     required this.updatedAt,
@@ -30,8 +30,8 @@ class DeckModel {
       deckId: json['deck_id'],
       deckName: json['deck_name'],
       deckDescription: json['deck_description'],
-      totalCardCount: json['total_cards_count'],
-      scannedCardCount: json['scanned_cards_count'],
+      totalXP: json['total_XP'],
+      userXP: json['user_XP'],
       imgUrl: json['img_url'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
@@ -44,8 +44,8 @@ class DeckModel {
       'deck_id': deckId,
       'deck_name': deckName,
       'deck_description': deckDescription,
-      'total_cards_count': totalCardCount,
-      'scanned_cards_count': scannedCardCount,
+      'total_XP': totalXP,
+      'user_XP': userXP,
       'img_url': imgUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
@@ -59,8 +59,8 @@ class DeckModel {
       'deck_id': deckId,
       'deck_name': deckName,
       'deck_description': deckDescription,
-      'total_cards_count': totalCardCount,
-      'scanned_cards_count': scannedCardCount,
+      'total_XP': totalXP,
+      'user_XP': userXP,
       'img_url': imgUrl,
       'created_at': createdAt,
       'updated_at': updatedAt,
@@ -74,8 +74,8 @@ class DeckModel {
       deckId: map['deck_id'],
       deckName: map['deck_name'],
       deckDescription: map['deck_description'],
-      totalCardCount: map['total_cards_count'],
-      scannedCardCount: map['scanned_cards_count'],
+      totalXP: map['total_XP'],
+      userXP: map['user_XP'],
       imgUrl: map['img_url'],
       createdAt: map['created_at'],
       updatedAt: map['updated_at'],

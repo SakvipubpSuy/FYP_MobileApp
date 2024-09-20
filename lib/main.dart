@@ -5,7 +5,7 @@ import 'pages/auth/landingpage.dart';
 void main() {
   // WidgetsFlutterBinding.ensureInitialized();
 
-  // // Recreate the database for testing purposes
+  // // Recreate the database for testing purposes, don't foeget to add async to the main function
   // DatabaseHelper dbHelper = DatabaseHelper();
   // await dbHelper.recreateDatabase();
   runApp(const MyApp());
