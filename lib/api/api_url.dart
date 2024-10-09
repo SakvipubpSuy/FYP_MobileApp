@@ -4,7 +4,8 @@ class ApiURL {
   //     "https://admin-unisaga.paragoniu.app/api";
 
   //Live Server DigitalOcean
-  static const String baseUrl = "http://174.138.21.126/api";
+  // static const String baseUrl = "http://174.138.21.126/api";
 
-  // static const String baseUrl = 'http://10.0.2.2:8000/api';
+  //Localhost
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
 }

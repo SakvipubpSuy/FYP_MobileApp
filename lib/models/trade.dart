@@ -2,8 +2,10 @@ class TradeModel {
   final int tradeId;
   final int initiatorId;
   final String? initiatorName;
+  final String? initiatorCardName;
   final int receiverId;
   final String? receiverName;
+  final String? receiverCardName;
   final String status;
   final String createdAt;
   final String updatedAt;
@@ -12,8 +14,10 @@ class TradeModel {
     required this.tradeId,
     required this.initiatorId,
     this.initiatorName,
+    this.initiatorCardName,
     required this.receiverId,
     this.receiverName,
+    this.receiverCardName,
     required this.status,
     required this.createdAt,
     required this.updatedAt,
@@ -24,8 +28,10 @@ class TradeModel {
       tradeId: json['trade_id'],
       initiatorId: json['initiator_id'],
       initiatorName: json['initiator_name'],
+      initiatorCardName: json['initiator_card_name'],
       receiverId: json['receiver_id'],
       receiverName: json['receiver_name'],
+      receiverCardName: json['receiver_card_name'],
       status: json['status'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
@@ -37,8 +43,10 @@ class TradeModel {
       'trade_id': tradeId,
       'initiator_id': initiatorId,
       'initiator_name': initiatorName,
+      'initiator_card_name': initiatorCardName,
       'receiver_id': receiverId,
       'receiver_name': receiverName,
+      'receiver_card_name': receiverCardName,
       'status': status,
       'created_at': createdAt,
       'updated_at': updatedAt,

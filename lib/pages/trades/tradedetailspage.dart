@@ -327,19 +327,19 @@ class _TradeDetailsPageState extends State<TradeDetailsPage>
     return Card(
       child: ListTile(
         title: Text(isIncoming
-            ? 'From: ${trade.initiatorName}'
-            : 'To: ${trade.receiverName}'),
+            ? 'From: ${trade.initiatorName} \nCard Receiving: ${trade.initiatorCardName}'
+            : 'To: ${trade.receiverName} \nCard: ${trade.initiatorCardName}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Status: ${trade.status}'),
             if (isPendingApproval) ...[
-              Text('Your card: ${trade.initiatorId}'),
-              Text('Received card: ${trade.receiverId}'),
+              Text('Your card: ${trade.initiatorCardName}'),
+              Text('Received card: ${trade.receiverCardName}'),
             ],
             if (isCompleted) ...[
-              Text('Your card: ${trade.initiatorId}'),
-              Text('Received card: ${trade.receiverId}'),
+              Text('Your card: ${trade.initiatorCardName}'),
+              Text('Received card: ${trade.receiverCardName}'),
             ],
           ],
         ),

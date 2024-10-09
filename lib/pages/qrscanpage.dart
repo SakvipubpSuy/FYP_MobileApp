@@ -229,9 +229,9 @@ class _QRScanState extends State<QRScan> {
       // Assuming you have a method to save the card in local database
       await CardDbHelper().saveCard(cardDetails);
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text('Card saved locally')),
-      // );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Card saved locally')),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to save card locally')),
