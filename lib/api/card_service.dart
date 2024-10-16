@@ -191,6 +191,8 @@ class CardService {
     // Get today's date in 'yyyy-MM-dd' format
     // Use this if you want to reset it every minute for testing purpose:
     // DateTime.now().toIso8601String().substring(0, 16);
+    //Use this if you want to reset it everyday
+    // DateTime.now().toIso8601String().split('T')[0];
 
     String todayDate = DateTime.now().toIso8601String().split('T')[0];
 

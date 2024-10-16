@@ -284,7 +284,7 @@ class CardWidget extends StatelessWidget {
                   color: Color(0xFF1A1A4D),
                 ),
                 overflow: TextOverflow.ellipsis,
-                maxLines: 2,
+                maxLines: 1,
               ),
               const SizedBox(height: 10),
               Text(
