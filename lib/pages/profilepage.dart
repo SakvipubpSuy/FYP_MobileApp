@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_mobileapp/api/auth_service.dart';
 import 'package:fyp_mobileapp/models/user.dart';
+import 'package:fyp_mobileapp/pages/aboutuspage.dart';
 import 'auth/landingpage.dart';
 import 'package:fyp_mobileapp/widgets/login_register_component.dart';
 import 'package:lottie/lottie.dart';
@@ -8,7 +9,7 @@ import '../api/user_service.dart';
 import '../api/card_service.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -47,11 +48,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _logout() async {
     await _authService.logout();
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LandingPage()),
-      (route) => false,
-    );
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LandingPage()),
+        (route) => false,
+      );
+    }
   }
 
   @override
@@ -144,20 +147,45 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 30),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: Container(
-                        child: ElevatedButton(
-                          onPressed: _logout,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 10),
+                      child: Column(
+                        children: [
+                          Container(
+                            child: ElevatedButton(
+                              onPressed: _logout,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.amber,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 10),
+                              ),
+                              child: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                    fontSize: 16, color: Color(0xFF1A1A4D)),
+                              ),
+                            ),
                           ),
-                          child: const Text(
-                            'Logout',
-                            style: TextStyle(
-                                fontSize: 16, color: Color(0xFF1A1A4D)),
+                          const SizedBox(height: 20),
+                          // About Us Button
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AboutPage()),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amber,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 50, vertical: 10),
+                            ),
+                            child: const Text(
+                              'About Us',
+                              style: TextStyle(
+                                  fontSize: 16, color: Color(0xFF1A1A4D)),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ],

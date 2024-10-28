@@ -207,69 +207,80 @@ class _TradePageState extends State<TradePage> {
       builder: (context, setState) {
         return AlertDialog(
           title: const Text('Select Card to Trade'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButton<String>(
-                hint: const Text('Select Deck'),
-                value: selectedDeck,
-                onChanged: (value) {
-                  setState(() {
-                    selectedDeck = value;
-                    selectedCardId = null;
-                  });
-                },
-                items: _tradableCards.keys.map((deckName) {
-                  return DropdownMenuItem<String>(
-                    value: deckName,
-                    child: Text(deckName),
-                  );
-                }).toList(),
-              ),
-              if (selectedDeck != null) ...[
-                const SizedBox(height: 16),
-                Text('Select Card from $selectedDeck'),
-                ..._tradableCards[selectedDeck]!.map<Widget>((card) {
-                  return RadioListTile<int>(
-                    title: Row(
-                      children: [
-                        if (card.imgUrl != null)
-                          Image.network(
-                            card.imgUrl!,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorBuilder: (BuildContext context,
-                                Object exception, StackTrace? stackTrace) {
-                              return const Icon(
-                                Icons.image_not_supported,
-                                size: 50,
-                                color: Colors.grey,
-                              );
-                            },
-                          )
-                        else
-                          const Icon(Icons.image_not_supported,
-                              size: 40, color: Colors.grey),
-                        const SizedBox(width: 10),
-                        Text(
-                          card.cardName,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
-                    ),
-                    value: card.cardId,
-                    groupValue: selectedCardId,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCardId = value;
-                      });
-                    },
-                  );
-                }),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButton<String>(
+                  hint: const Text('Select Deck'),
+                  value: selectedDeck,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDeck = value;
+                      selectedCardId = null;
+                    });
+                  },
+                  items: _tradableCards.keys.map((deckName) {
+                    return DropdownMenuItem<String>(
+                      value: deckName,
+                      child: Text(
+                        deckName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    );
+                  }).toList(),
+                ),
+                if (selectedDeck != null) ...[
+                  const SizedBox(height: 16),
+                  Text('Select Card from $selectedDeck'),
+                  ..._tradableCards[selectedDeck]!.map<Widget>((card) {
+                    return RadioListTile<int>(
+                      title: Row(
+                        children: [
+                          if (card.imgUrl != null)
+                            Image.network(
+                              card.imgUrl!,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace? stackTrace) {
+                                return const Icon(
+                                  Icons.image_not_supported,
+                                  size: 40,
+                                  color: Colors.grey,
+                                );
+                              },
+                            )
+                          else
+                            const Icon(Icons.image_not_supported,
+                                size: 40, color: Colors.grey),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              card.cardName,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                  fontSize:
+                                      16), // optional for better UI consistency
+                            ),
+                          ),
+                        ],
+                      ),
+                      value: card.cardId,
+                      groupValue: selectedCardId,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCardId = value;
+                        });
+                      },
+                    );
+                  }),
+                ],
               ],
-            ],
+            ),
           ),
           actions: [
             TextButton(
